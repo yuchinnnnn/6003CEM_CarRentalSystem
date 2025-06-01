@@ -1,0 +1,83 @@
+<!-- frontend/pages/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="../css/login.css" />
+  <title>Login & Register</title>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="form-header">
+      <div class="title"></div>
+      <div class="title-login">Login</div>
+      <div class="title-register">Register</div>
+    </div>
+    <form action="#" class="login-form" autocomplete="off">
+      <div class="input-box">
+        <input type="text" class="input-field" id="log-email" required>
+        <label for="log-email" class="label">Email</label>
+        <i class='bx bx-envelope icon'></i>
+      </div>
+      <div class="input-box">
+        <input type="password" class="input-field" id="log-password" required>
+        <label for="log-pass" class="label">Password</label>
+        <i class='bx bx-lock-alt icon'></i>
+      </div>
+      <div class="form-cols">
+        <div class="col-1"></div>
+        <div class="col-2">
+          <a href="#" >Forgot password?</a>
+        </div>
+        <div class="input-box">
+          <button class="btn-submit" id=SignInBtn>Sign In 
+            <i class="bx bx-log-in"></i>
+          </button>
+        </div>
+        <div class="switch-form">
+          <span>Don't have an account? <a href="#">Register</a></span>
+        </div>
+      </div>
+      
+    </form>
+
+    <form action="#" class="register-form" autocomplete="off">
+      <div class="input-box">
+        <input type="text" class="input-field" id="reg-name" required>
+        <label for="reg-name" class="label">Username</label>
+        <i class='bx bx-user icon'></i>
+      </div>
+      <div class="input-box">
+        <input type="text" class="input-field" id="reg-email" required>
+        <label for="reg-email" class="label">Password</label>
+        <i class='bx bx-lock-alt icon'></i>
+      </div>
+      <div class="input-box">
+        <input type="password" class="input-field" id="reg-password" required>
+        <label for="reg-pass" class="label">Password</label>
+        <i class='bx bx-lock-alt icon'></i>
+      </div>
+      <div class="form-cols">
+        <div class="col-1">
+          <input type="checkbox" id="agree">
+          <label for="agree">I agree to the <a href="#">Terms & Conditions</a></label>
+        </div>
+        <div class="col-2"></div>
+        <div class="input-box">
+          <button class="btn-submit" id=SignInBtn>Sign Up 
+            <i class="bx bx-log-out"></i>
+          </button>
+        </div>
+        <div class="switch-form">
+          <span>Already have an account? <a href="#">Login</a></span>
+        </div>
+      </div>
+      
+    </form>
+    
+  </div>
+  <script src="../js/login.js" defer></script>
+</body>
+</html>

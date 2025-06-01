@@ -1,0 +1,34 @@
+<!-- frontend/pages/auth.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login / Signup</title>
+  <link rel="stylesheet" href="../css/auth.css" />
+  <script src="../js/auth.js" defer></script>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="tabs">
+      <button id="login-tab" class="active">Login</button>
+      <button id="signup-tab">Sign Up</button>
+    </div>
+
+    <div id="login-form" class="form active">
+      <h2>Login</h2>
+      <input type="email" id="login-email" placeholder="Email" required />
+      <input type="password" id="login-password" placeholder="Password" required />
+      <button onclick="login()">Login</button>
+      <p id="login-msg"></p>
+    </div>
+
+    <div id="signup-form" class="form">
+      <h2>Sign Up</h2>
+      <input type="email" id="signup-email" placeholder="Email" required />
+      <input type="password" id="signup-password" placeholder="Password" required />
+      <button onclick="signup()">Sign Up</button>
+      <p id="signup-msg"></p>
+    </div>
+  </div>
+</body>
+</html>
