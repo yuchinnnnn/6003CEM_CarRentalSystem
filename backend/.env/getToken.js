@@ -1,0 +1,34 @@
+const axios = require('axios');
+
+async function getToken() {
+  try {
+    const response = await axios.post('https://carapi.app/api/auth/login', {
+      api_token: 'a2f9f09c-355e-4e43-8a70-8b6790844032',
+      api_secret: '7edd04657880f7858cc59a956e19441a',
+    }, {
+      headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json',
+      }
+    });
+
+    const data = response.data;  // ✅ axios response data is already parsed JSON or text
+    console.log('Full response data:', data);
+    return response.data.token;
+
+  } catch (error) {
+  if (error.response) {
+    // The request was made and the server responded with a status code outside 2xx
+    console.error('Status:', error.response.status);
+    console.error('Data:', error.response.data);
+  } else if (error.request) {
+    // The request was made but no response was received
+    console.error('No response received:', error.request);
+  } else {
+    // Something else happened
+    console.error('Error:', error.message);
+  }
+  }
+}
+
+getToken();

@@ -1,0 +1,99 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f9ff;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.car-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.car-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  overflow: hidden;
+  width: 300px;
+  transition: transform 0.2s;
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+}
+
+.car-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 16px;
+  position: relative;
+}
+
+.card-content h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #222;
+}
+
+.card-content .year-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #eaf4ff;
+  border: 2px dashed #79b8f3;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1b74d6;
+}
+
+.card-icons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  color: #555;
+  font-size: 14px;
+}
+
+.card-icons i {
+  margin-right: 4px;
+}
+
+.price-rent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.price {
+  font-size: 20px;
+  color: #222;
+  font-weight: bold;
+}
+
+button {
+  background: #1b74d6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #135ab0;
+}

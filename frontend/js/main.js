@@ -1,25 +1,47 @@
-// frontend/js/main.js
+const API_KEY = 'a2f9f09c-355e-4e43-8a70-8b6790844032';
+const carList = document.getElementById('carList');
 
-// Simulated car data (replace with real API later)
-const cars = [
-  { model: "Toyota Camry", price: "$40/day", image: "assets/camry.jpg" },
-  { model: "Honda Civic", price: "$35/day", image: "assets/civic.jpg" },
-  { model: "BMW X5", price: "$90/day", image: "assets/bmw.jpg" },
-  { model: "Tesla Model 3", price: "$120/day", image: "assets/tesla.jpg" }
-];
+fetch('http://localhost:5000/api/cars')
+  .then(res => res.json())
+  .then(data => {
+    console.log("Data from backend:", data);
 
-const container = document.getElementById("car-container");
+    data.forEach(car => {
+      const image = car.image?.url || 'https://via.placeholder.com/300x180?text=No+Image';
+      const make = car.name || 'Unknown';
+      const model = car.model || 'Model';
+      const year = car.year || 'N/A';
+      const msrp = car.msrp || (Math.floor(Math.random() * 20000) + 20000); // Simulate if missing
 
-if (container) {
-  cars.forEach(car => {
-    const card = document.createElement("div");
-    card.className = "car-card";
-    card.innerHTML = `
-      <img src="${car.image}" alt="${car.model}">
-      <h3>${car.model}</h3>
-      <p class="price">${car.price}</p>
-      <button>Add to Wishlist</button>
-    `;
-    container.appendChild(card);
+      const fuelType = car.fuel_type || 'Gasoline';
+      const transmission = car.transmission || 'Automatic';
+      const passengers = 4;
+      const economy = (Math.random() * 5 + 4).toFixed(1); // Fake fuel economy
+
+      const card = document.createElement('div');
+      card.className = 'car-card';
+      card.innerHTML = `
+        <img src="${image}" alt="${make} ${model}">
+        <div class="card-content">
+          <h3>${make} ${model}</h3>
+          <span class="year-badge">${year}</span>
+          <div class="card-icons">
+            <div><i>👥</i> ${passengers} People</div>
+            <div><i>⚡</i> ${fuelType}</div>
+          </div>
+          <div class="card-icons">
+            <div><i>⛽</i> ${economy}km / 1-litre</div>
+            <div><i>🔧</i> ${transmission}</div>
+          </div>
+          <div class="price-rent">
+            <div class="price">$${Math.floor(msrp / 100)} / month</div>
+            <button>Rent now</button>
+          </div>
+        </div>
+      `;
+      carList.appendChild(card);
+    });
+  })
+  .catch(err => {
+    console.error('Error fetching cars:', err);
   });
-}
