@@ -5,10 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Car Rental</title>
   <link rel="stylesheet" href="../css/carlist.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
+  integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
-  <h1>Available Cars</h1>
-  <div class="car-list" id="carList"></div>
+  <header >
+    <div id="stars"></div>
+    <div class="navbar">  
+      <img src="../assets/logo.png" alt="">
+      <div class="center-nav">
+        <a href="/">Home</a>
+        <a href="/carlist">Carlist</a>
+        <a href="/wishlist">Wishlist</a>
+        <a href="/login">Account</a>
+      </div>
+      <div class="social">
+        <a href=""><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href=""><i class="fa-solid fa-bookmark"></i></a>
+        <a href=""><i class="fa-solid fa-bell"></i></a>
+      </div>
+
+  <!-- <div class="nav">
+    <div class="nav-text">
+      <i class="fa-solid fa-home"></i>  <a href="/">Back to Homepage </a>
+    </div>
+  </div> -->
+
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>Filter By</h2>
+      <div class="filter-group">
+        <label for="carType">Car Type</label>
+        <select id="carType">
+          <option value="">All</option>
+          <option value="SUV">SUV</option>
+          <option value="Sedan">Sedan</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Price Range</label>
+        <div class="price-inputs">
+          <input type="number" id="minPrice" placeholder="Min" />
+          <span>-</span>
+          <input type="number" id="maxPrice" placeholder="Max" />
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Rental Period</label>
+        <div class="date-inputs">
+          <input type="date" id="startDate" />
+          <span>to</span>
+          <input type="date" id="endDate" />
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label for="carBrand">Car Brand</label>
+        <select id="carBrand">
+          <option value="">All</option>
+          <option value="Toyota">Toyota</option>
+          <option value="Honda">Honda</option>
+          <option value="Ford">Ford</option>
+          <option value="BMW">BMW</option>
+        </select>
+      </div>
+
+      <button id="applyFilter" class="apply-button">Apply Filter</button>
+    </aside>
+
+    <main class="main-content">
+      <h1>Available Cars</h1>
+
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by make or model..." />
+        <button id="searchButton">Search</button>
+      </div>
+
+      <div class="car-list" id="carList"></div>
+    </main>
+  </div>
 
   <script src="../js/main.js"></script>
 </body>

@@ -1,13 +1,137 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #f5f9ff;
+  background: black;
   margin: 0;
   padding: 20px;
 }
 
-h1 {
-  text-align: center;
-  color: #333;
+header {
+  width: 100%;
+  height: 100vh;
+  /* margin-top: -100px; */
+  background-color: transparent;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.stars {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background-color: white;
+  animation: twinkle 2s infinite;
+  box-shadow: 0 0 10px 2px rgba(255,255,255,0.5);
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.navbar {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
+  align-items:flex-start;
+  animation: slideInFromTop 1s ease-in-out;
+}
+
+.navbar img{
+  width: 50px;
+  padding-left: 10px;
+  animation: rotateIn 1s ease-in-out;
+}
+
+.social {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  position: absolute;
+  right: 80px;
+}
+
+.social a {
+  margin-right: 10px;
+}
+
+.navbar .center-nav a,
+.social a {
+  color: white;
+  font-size: 1.2rem;
+  font-family: Georgia, 'Times New Roman', Times, serif ;
+  margin-top: -80px;
+  margin-left: 15px;
+  transition: all 0.5s ease;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+.navbar .center-nav a:first-child {
+  margin-left: 100px;
+}
+
+.navbar .center-nav a:nth-child(2) {
+  color: rgb(255,140,0);
+  /* margin-left: 100px; */
+}
+
+.navbar .center-nav a:hover,
+.social a:hover {
+  color: rgb(255,140,0);
+  text-shadow: 0px 0px 30px rgba(255,140,0);
+}
+
+.navbar .center-nav a {
+  position: relative;
+  text-decoration: none;
+}
+
+.navbar .center-nav a::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: rgb(255,140,0);
+  bottom: 0;
+  left: 0;
+  transition: all 0.3s ease-in-out;
+  transform: scaleX(0);
+}
+
+.navbar .center-nav a:hover::before {
+  visibility: visible;
+  transform: scaleX(1);
+}
+
+.nav{
+    position: fixed;
+    top: 20px;
+    left: 50px;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+}
+
+.nav-text a{
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    transition: var(--transition-3s);
+}
+
+.nav-text i{
+    font-size: 20px;
+    margin-right: 10px;
+    color: white;
 }
 
 .car-list {
@@ -16,6 +140,169 @@ h1 {
   gap: 30px;
   justify-content: center;
 }
+/* Layout container for sidebar + main content */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Sidebar styling */
+.sidebar {
+  position: absolute;
+  width: 285px;
+  top: 80px;  /* Adjust this based on icon position */
+  left: 20px;
+  background-color: #f8f8f8;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+  flex-shrink: 0;
+  margin-top: 20px;
+  z-index: 999; /* Make sure it's above other content */
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.filter-group {
+  margin-bottom: 20px;
+}
+
+.filter-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.filter-group select {
+  width: 100%;
+  height: auto;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.price-inputs,
+.date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-inputs input,
+.date-inputs input,
+select {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  max-width: 40%;
+}
+
+.price-inputs span,
+.date-inputs span {
+  font-weight: bold;
+  color: #666;
+}
+
+.apply-button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: rgb(255,140,0);
+  color: white;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.apply-button:hover {
+  background-color: rgb(144, 84, 12);
+}
+
+/* Main content area */
+.main-content {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: -1080px;
+  margin-top: 30px;
+}
+
+.main-content h1 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 2rem;
+  color: white;
+}
+
+/* Search container */
+.search-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#searchInput {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+#searchButton {
+  padding: 10px 20px;
+  background-color: rgb(255,140,0);;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+#searchButton:hover {
+  background-color: rgb(144, 84, 12);
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .sidebar {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .search-container {
+    flex-direction: column;
+  }
+
+  #searchButton {
+    width: 100%;
+  }
+}
+
 
 .car-card {
   background: #fff;
