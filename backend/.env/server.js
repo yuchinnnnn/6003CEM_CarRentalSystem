@@ -5,12 +5,18 @@ const dotenv = require('dotenv');
 const axios = require('axios');
 const xml2js = require('xml2js');
 
+const NodeCache = require("node-cache");
+const ONE_MONTH = 30 * 24 * 60 * 60; // 30 days in seconds
+const carCache = new NodeCache({ stdTTL: ONE_MONTH });
+const detailsCache = new NodeCache({ stdTTL: ONE_MONTH });
+
 dotenv.config();
 
 const authRoutes = require('../routes/auth.js');
 const wishlistRoutes = require('../routes/wishlist.js');
 const { modelName } = require('../models/User.js');
-const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzQ5NTI3MTMxLCJpYXQiOjE3NDg5MjIzMzEsImp0aSI6IjdmNTVjM2NkLTljZTAtNDc4Yi04MDQ1LWVkNjc2YWY1ZmZhMyIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.6IyFXpJNaBCNzlVMMU-Hf2FHCvLjdLHpH-uXNJXwqxA';
+// const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzQ5NTI3MTMxLCJpYXQiOjE3NDg5MjIzMzEsImp0aSI6IjdmNTVjM2NkLTljZTAtNDc4Yi04MDQ1LWVkNjc2YWY1ZmZhMyIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.6IyFXpJNaBCNzlVMMU-Hf2FHCvLjdLHpH-uXNJXwqxA';
+const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiYXVkIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiZXhwIjoxNzQ5ODMyNTA0LCJpYXQiOjE3NDkyMjc3MDQsImp0aSI6IjhlOGI2Yjk5LWFkMzYtNDY3Mi05YjRjLWM3MTMxMTcwYjk3OSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.PWNUsPn2fake9SJMoGuZehkAh-LyUMVLfwfjuX1Vlq0';
 const CARSXE_API = '6hzkyx7xq_ueu31sjx3_baqauxwg8';
 
 const app = express();
@@ -24,18 +30,32 @@ app.use(express.json());
 app.get('/api/cars', async (req, res) => {
   try {
     const { year = 2020 } = req.query;
+
+    // Check cache first
+    const cacheKey = `cars_${year}`;
+    const cached = carCache.get(cacheKey);
+    if (cached) {
+      console.log('✅ Using cached data');
+      return res.json({ fromCache: true, data: cached });
+    }
+
+    console.log('🔄 Fetching fresh data from API');
+
     const totalPages = 5;
     const allModels = [];
 
     for (let page = 1; page <= totalPages; page++) {
       const response = await axios.get('https://carapi.app/api/models/v2', {
-        headers: { Authorization: Bearer `${API_KEY} `},
+        headers: { Authorization: `Bearer ${API_KEY}`},
         params: { year, page }
       });
 
       const models = response.data.data || response.data; // Adjust if structure differs
       allModels.push(...models);
     }
+
+    // Save to cache
+    carCache.set(cacheKey, allModels);
 
     res.json(allModels); // Send the combined array
   } catch (error) {
@@ -83,6 +103,12 @@ app.get('/api/car-image', async (req, res) => {
 
 app.get('/api/car-details', async (req, res) => {
   const { make, model, year = 2020 } = req.query;
+  const cacheKey = `details_${make}_${model}_${year}`;
+
+  // cache data
+  if (detailsCache.has(cacheKey)) {
+    return res.json(detailsCache.get(cacheKey));
+  }
 
   if (!make || !model || !year) {
     return res.status(400).json({ error: 'Missing make, model, or year' });
@@ -90,7 +116,7 @@ app.get('/api/car-details', async (req, res) => {
 
   try {
     const response = await axios.get('https://carapi.app/api/bodies/v2', {
-      headers: { Authorization: Bearer` ${API_KEY}` },
+      headers: { Authorization: `Bearer ${API_KEY}` },
       params: { make, model, year }
     });
 
@@ -104,13 +130,10 @@ app.get('/api/car-details', async (req, res) => {
     const uniqueTypes = [...new Set(carTrims.map(car => car.type))];
     const uniqueSeats = [...new Set(carTrims.map(car => car.seats))];
 
-    res.json({
-      make,
-      model,
-      year,
-      types: uniqueTypes,
-      seats: uniqueSeats
-    });
+    const result = { make, model, year, types: uniqueTypes, seats: uniqueSeats };
+    detailsCache.set(cacheKey, result);
+    res.json(result);
+
   } catch (error) {
     console.error('Car details fetch error:', error.message);
     res.status(500).json({ error: 'Failed to fetch car details' });

@@ -12,10 +12,10 @@ document.getElementById('searchButton').addEventListener('click', () => {
 });
 
 
-document.getElementById('filterButton').addEventListener('click', () => {
-  const filterOptions = document.getElementById('filterOptions');
-  filterOptions.classList.toggle('show');
-});
+// document.getElementById('filterButton').addEventListener('click', () => {
+//   const filterOptions = document.getElementById('filterOptions');
+//   filterOptions.classList.toggle('show');
+// });
 
 
 fetch('http://localhost:5000/api/cars')
@@ -24,7 +24,7 @@ fetch('http://localhost:5000/api/cars')
     console.log("Data from backend:", data);
 
     data.forEach(car => {
-           
+      
       const make = car.make || 'Unknown';
       const model = car.name || 'Model';
       const year = car.year || 'N/A';

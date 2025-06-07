@@ -20,4 +20,8 @@ app.get("/wishlist", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend/pages", "wishlist.html"));
 });
 
+app.get("/about", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend/pages", "about.html"));
+});
+
 app.listen(3000, () => console.log("Frontend running at http://localhost:3000"));
