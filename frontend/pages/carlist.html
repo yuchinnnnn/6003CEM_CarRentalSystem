@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Car Rental</title>
   <link rel="stylesheet" href="../css/carlist.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
   integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
@@ -12,14 +13,14 @@
 
 </head>
 <body>
-  <header >
+  <header>
     <div class="navbar">  
       <img src="../assets/logo.png" alt="">
       <div class="center-nav">
         <a href="/">Home</a>
-        <a href="/carlist">Carlist</a>
+        <a href="/carlist" class="active">Carlist</a>
         <a href="/about">About Us</a>
-        <a href="/login">Account</a>
+        <a id="accountLink" href="/login">Account</a>
       </div>
       <div class="social">
         <a href=""><i class="fa-solid fa-magnifying-glass"></i></a>
@@ -27,15 +28,12 @@
         <a href=""><i class="fa-solid fa-bell"></i></a>
       </div>
     </div>
+  </header>
 
-  <!-- <div class="nav">
-    <div class="nav-text">
-      <i class="fa-solid fa-home"></i>  <a href="/">Back to Homepage </a>
-    </div>
-  </div> -->
-
+  
   <div class="layout">
-    <aside class="sidebar">
+    <aside class="sidebar hidden" id="filterSidebar">
+      <button id="closeFilterBtn" class="close-button">✖</button>
       <h2>Filter By</h2>
       <div class="filter-group">
         <label for="carType">Car Type</label>
@@ -86,10 +84,15 @@
         <button id="searchButton">Search</button>
       </div>
 
+      <div class="filter-toggle-container">
+        <button id="openFilterBtn" class="open-button">Filter Options</button>
+      </div>
+
       <div class="car-list" id="carList"></div>
     </main>
   </div>
 
   <script src="../js/main.js"></script>
+  <script src="../js/navbar.js"></script>
 </body>
 </html>

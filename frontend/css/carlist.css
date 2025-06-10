@@ -1,39 +1,47 @@
-body {
+* {
+  transition: all 0.3s ease;
+}
+
+body{
+  color: white;
   font-family: 'Segoe UI', sans-serif;
-  background: black;
+  animation: fadeIn 1s ease-in-out;
+  background-color: black;
+  background-attachment: fixed;
   margin: 0;
   padding: 20px;
 }
 
 header {
   width: 100%;
-  height: 100vh;
-  /* margin-top: -100px; */
   background-color: transparent;
   animation: fadeIn 1s ease-in-out;
 }
 
-.navbar {
+/* .navbar {
   width: 94%;
   display: flex;
   justify-content: space-between;
-  align-items: center; 
-  padding: 20px 40px;
-  position: relative;
-  background-color: black;
-  animation: slideInFromTop 1s ease-in-out;
+  align-items: center;
+  padding: 18px 40px;
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
   z-index: 1000;
 }
+
 
 .navbar img {
   width: 50px;
   animation: rotateIn 1s ease-in-out;
 }
 
-/* Center Nav */
+Center Nav
 .center-nav {
   display: flex;
-  gap: 25px;
+  gap: 35px;
 }
 
 .center-nav a {
@@ -43,14 +51,14 @@ header {
   font-family: Georgia, 'Times New Roman', Times, serif;
   transition: all 0.3s ease;
   position: relative;
-}
+} */
 
 /* Highlight active link */
 .center-nav a:nth-child(2) {
   color: orange;
 }
 
-.center-nav a:hover,
+/* .center-nav a:hover,
 .social a:hover {
   color: orange;
   text-shadow: 0px 0px 10px rgba(255, 140, 0, 0.8);
@@ -70,9 +78,9 @@ header {
 
 .center-nav a:hover::before {
   transform: scaleX(1);
-}
+} */
 
-/* Social Icons */
+/* Social Icons
 .social {
   display: flex;
   align-items: center;
@@ -81,10 +89,14 @@ header {
 
 .social i {
   font-size: 1.2rem;
-  color: white;
-  background-color: black;
-  transition: color 0.3s ease;
+  color: #f0f0f0;
+  transition: color 0.3s ease, transform 0.2s;
 }
+
+.social i:hover {
+  color: rgb(255,140,0);
+  transform: scale(1.2);
+} */
 
 .nav{
     position: fixed;
@@ -126,47 +138,70 @@ header {
 }
 
 /* Sidebar styling */
+
 .sidebar {
-  position: absolute;
-  width: 285px;
-  top: 80px;  /* Adjust this based on icon position */
-  left: 20px;
-  background-color: #f8f8f8;
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
-  flex-shrink: 0;
-  margin-top: 20px;
-  z-index: 999; /* Make sure it's above other content */
-  animation: fadeIn 0.5s ease-in-out;
+  position: fixed;
+  top: 100px;
+  left: 30px;
+  width: 300px;
+  background: #1f1f1f;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #2b2b2b;
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+  z-index: 999;
+  animation: fadeIn 0.4s ease-in-out;
+  color: #fff;
+}
+
+.sidebar {
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
 }
 
 .sidebar h2 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.5rem;
-  color: #333;
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: rgb(255,140,0);
+  font-weight: bold;
+}
+
+
+.sidebar.hidden {
+  transform: translateX(-110%);
+  position: absolute;
 }
 
 .filter-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .filter-group label {
   display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #bbb;
 }
 
-.filter-group select {
+.filter-group select,
+.price-inputs input,
+.date-inputs input {
   width: 100%;
-  height: auto;
+  background: #2c2c2c;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 8px;
   padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.filter-group select:focus,
+.price-inputs input:focus,
+.date-inputs input:focus {
+  border-color: rgb(255,140,0);
 }
 
 .price-inputs,
@@ -175,40 +210,33 @@ header {
   align-items: center;
   gap: 8px;
 }
-
-.price-inputs input,
-.date-inputs input,
-select {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  max-width: 40%;
-}
-
+ 
 .price-inputs span,
 .date-inputs span {
-  font-weight: bold;
-  color: #666;
+  color: #999;
+  font-size: 14px;
 }
+
 
 .apply-button {
   width: 100%;
-  padding: 12px 0;
+  padding: 12px;
   background-color: rgb(255,140,0);
-  color: white;
+  color: #000;
   font-weight: 700;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-size: 16px;
   cursor: pointer;
-  font-size: 1.1rem;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease;
+  margin-top: 8px;
 }
 
 .apply-button:hover {
-  background-color: rgb(144, 84, 12);
+  background-color: rgb(200, 90, 0);
 }
+
+
 
 /* Main content area */
 .main-content {
@@ -305,21 +333,13 @@ select {
 }
 
 .card-content h3 {
-  margin: 0;
-  font-size: 20px;
-  color: #222;
+  color: rgb(255,140,0);
 }
 
 .card-content .year-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: #eaf4ff;
-  border: 2px dashed #79b8f3;
-  padding: 4px 10px;
-  border-radius: 10px;
-  font-size: 14px;
-  color: #1b74d6;
+  background: rgba(255,140,0, 0.2);
+  border: 1px solid orange;
+  color: orange;
 }
 
 .card-icons {
@@ -359,4 +379,44 @@ button {
 
 button:hover {
   background: #135ab0;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  color: rgb(255,140,0);
+  font-size: 24px;
+  font-weight: bold;
+  float: right;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #fff;
+}
+
+.hidden {
+  display: none;
+}
+
+
+.filter-toggle-container {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.open-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.open-button:hover {
+  background-color: #0056b3;
 }

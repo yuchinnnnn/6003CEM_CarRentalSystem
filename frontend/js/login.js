@@ -1,3 +1,10 @@
+
+
+// NOT USING CURRENTLY
+// Converted to AUTH.js
+
+
+
 const loginForm = document.querySelector(".login-form");
 const registerForm = document.querySelector(".register-form");
 const wrapper = document.querySelector(".wrapper");
@@ -30,7 +37,7 @@ function registerFunction() {
     registerTitle.style.opacity = 1;
 }
 
-// 👇 Add form submission handlers
+// Add form submission handlers
 loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(loginForm);
@@ -46,9 +53,6 @@ loginForm.addEventListener("submit", async (e) => {
         const result = await res.json();
         if (res.ok) {
             alert("✅ Login successful");
-            // Optionally: store token, redirect, etc.
-            // localStorage.setItem("token", result.token);
-            // window.location.href = "/dashboard.html";
         } else {
             alert(`❌ Login failed: ${result.message}`);
         }
@@ -72,7 +76,7 @@ registerForm.addEventListener("submit", async (e) => {
         const result = await res.json();
         if (res.ok) {
             alert("✅ Registered successfully!");
-            loginFunction(); // Optional: switch to login form
+            loginFunction()
         } else {
             alert(`❌ Registration failed: ${result.message} | ${result.error}`);
         }

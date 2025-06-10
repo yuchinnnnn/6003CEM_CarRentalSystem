@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account</title>
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/account.css">
+</head>
+<body>
+  <header class="navbar">
+    <!-- Include the same navbar with id="accountLink" -->
+    <img src="/assets/logo.png" alt="">
+    <div class="center-nav">
+      <a href="/">Home</a>
+      <a href="/carlist">Carlist</a>
+      <a href="/about">About Us</a>
+      <a id="accountLink" href="/account">Account</a>
+    </div>
+    <div class="social">
+      <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
+      <a href="#"><i class="fa-solid fa-bookmark"></i></a>
+      <a href="#"><i class="fa-solid fa-bell"></i></a>
+    </div>
+  </header>
+
+  <main class="account-container">
+    <h1>Welcome, <span id="usernameDisplay">User</span></h1>
+
+    <section class="profile-section">
+      <h2>Profile Info</h2>
+      <p><strong>Username:</strong> <span id="profileUsername">-</span></p>
+      <p><strong>Email:</strong> <span id="profileEmail">-</span></p>
+      <p><strong>User ID:</strong> <span id="profileUserId">-</span></p>
+    </section>
+
+    <section class="history-section">
+      <h2>Rental History</h2>
+      <p>Coming soon...</p>
+    </section>
+
+    <section class="settings-section">
+      <h2>Settings</h2>
+      <button id="logoutBtn">🚪 Log out</button>
+    </section>
+  </main>
+
+  <script src="/js/navbar.js"></script>
+  <script src="/js/account.js"></script>
+</body>
+</html>

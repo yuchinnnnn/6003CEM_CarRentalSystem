@@ -1,10 +1,11 @@
-<!-- frontend/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AutoRent</title>
   <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
     integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -12,40 +13,35 @@
 
 <body>
   <header >
-    <div id="stars"></div>
     <div class="navbar">  
       <img src="../assets/logo.png" alt="">
       <div class="center-nav">
-        <a href="/">Home</a>
+        <a href="/" class="active">Home</a>
         <a href="/carlist">Carlist</a>
         <a href="/about">About Us</a>
-        <!-- <a href="">About</a> -->
-        <a href="/login">Account</a>
+        <a id="accountLink" href="/login">Account</a>
       </div>
       <div class="social">
         <a href=""><i class="fa-solid fa-magnifying-glass"></i></a>
         <a href=""><i class="fa-solid fa-bookmark"></i></a>
         <a href=""><i class="fa-solid fa-bell"></i></a>
       </div>
+    </div>
+  </header>
 
+  <div class="layout">
       <div class="text">
         <h1>AutoRent <br> Car Rental</h1> 
         <p>Rent a car anytime at anywhere from anyone.</p>
         <a href="/login" class="btn">Get Started</a>
         <a href="/about" class="btn">Learn More</a>
       </div>
-
-    </div>
-    <!-- <div class="cars">
-      <img src="../assets/car1.jpg" alt="">
-      <img src="../assets/car2.jpg" alt="">
-      <img src="../assets/car3.jpg" alt="">
-    </div> -->
-
     <div class="car-toggle">
       <img src="../assets/cars.png" alt="" class="active">
     </div>
-    
-  </header>
+  </div>
+
+  <script src="../js/navbar.js"></script>
+
 </body>
 </html>

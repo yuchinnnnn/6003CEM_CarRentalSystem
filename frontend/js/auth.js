@@ -1,73 +1,130 @@
-// frontend/js/auth.js
+// ----- UI Switching Logic (from login.js) -----
+const loginForm = document.querySelector(".login-form");
+const registerForm = document.querySelector(".register-form");
+const wrapper = document.querySelector(".wrapper");
+const loginTitle = document.querySelector(".title-login");
+const registerTitle = document.querySelector(".title-register");
 
-// Tab switching
-document.getElementById('login-tab').addEventListener('click', () => {
-  setActiveTab('login');
-});
-document.getElementById('signup-tab').addEventListener('click', () => {
-  setActiveTab('signup');
-});
-
-function setActiveTab(tab) {
-  document.getElementById('login-form').classList.remove('active');
-  document.getElementById('signup-form').classList.remove('active');
-  document.getElementById('login-tab').classList.remove('active');
-  document.getElementById('signup-tab').classList.remove('active');
-
-  document.getElementById(`${tab}-form`).classList.add('active');
-  document.getElementById(`${tab}-tab`).classList.add('active');
+function loginFunction() {
+  loginForm.style.left = "50%";
+  loginForm.style.opacity = 1;
+  registerForm.style.left = "150%";
+  registerForm.style.opacity = 0;
+  wrapper.style.height = "500px";
+  loginTitle.style.top = "50%";
+  loginTitle.style.opacity = 1;
+  registerTitle.style.top = "50px";
+  registerTitle.style.opacity = 0;
 }
 
-async function signup() {
-  const email = document.getElementById('signup-email').value.trim();
-  const password = document.getElementById('signup-password').value.trim();
-  const msg = document.getElementById('signup-msg');
+function registerFunction() {
+  loginForm.style.left = "-50%";
+  loginForm.style.opacity = 0;
+  registerForm.style.left = "50%";
+  registerForm.style.opacity = 1;
+  wrapper.style.height = "580px";
+  loginTitle.style.top = "-60px";
+  loginTitle.style.opacity = 0;
+  registerTitle.style.top = "50%";
+  registerTitle.style.opacity = 1;
+}
 
+document.querySelectorAll(".show-pass").forEach(button => {
+  const targetId = button.dataset.target;
+  const input = document.getElementById(targetId);
+
+  button.addEventListener("mousedown", () => {
+    input.type = "text";
+  });
+
+  button.addEventListener("mouseup", () => {
+    input.type = "password";
+  });
+
+  button.addEventListener("mouseleave", () => {
+    input.type = "password";
+  });
+});
+
+// ----- Utility: Decode JWT to get user ID -----
+function parseJwt(token) {
   try {
-    const res = await fetch('http://localhost:5000/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-
-    if (res.ok) {
-      msg.style.color = 'green';
-      msg.textContent = 'Signup successful! Please login.';
-      setTimeout(() => setActiveTab('login'), 1000);
-    } else {
-      msg.textContent = data.msg || 'Signup failed.';
-    }
-  } catch (err) {
-    msg.textContent = 'Server error.';
+    const base64 = token.split('.')[1];
+    const json = atob(base64);
+    return JSON.parse(json);
+  } catch (e) {
+    console.error("Failed to parse JWT", e);
+    return null;
   }
 }
 
-async function login() {
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value.trim();
-  const msg = document.getElementById('login-msg');
+// ----- LOGIN Handler -----
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(loginForm);
+  const data = Object.fromEntries(formData.entries());
 
   try {
-    const res = await fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
-    const data = await res.json();
 
+    const result = await res.json();
     if (res.ok) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('email', email);
-      msg.style.color = 'green';
-      msg.textContent = 'Login successful!';
-      setTimeout(() => {
-        window.location.href = 'carlist.html';
-      }, 1000);
-    } else {
-      msg.textContent = data.msg || 'Login failed.';
+  const token = result.token;
+  const decoded = parseJwt(token);
+
+  if (decoded && decoded.id) {
+    localStorage.setItem("token", token);
+    localStorage.setItem("userId", decoded.id);
+    localStorage.setItem("email", data.email);
+
+    try {
+      const userRes = await fetch(`http://localhost:5000/api/user/${decoded.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const user = await userRes.json();
+      if (user.username) {
+        localStorage.setItem("username", user.username);
+      }
+    } catch (err) {
+      console.warn("Could not fetch username:", err);
+    }
+  }
+
+  alert("✅ Login successful");
+  window.location.href = "/";
+} else {
+      alert(`❌ Login failed: ${result.message}`);
     }
   } catch (err) {
-    msg.textContent = 'Server error.';
+    alert("⚠️ Login error: " + err.message);
   }
-}
+});
+
+// ----- REGISTER Handler -----
+registerForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(registerForm);
+  const data = Object.fromEntries(formData.entries());
+
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert("✅ Registered successfully!");
+      loginFunction(); // switch to login view
+    } else {
+      alert(`❌ Registration failed: ${result.message || result.error}`);
+    }
+  } catch (err) {
+    alert("⚠️ Registration error: " + err.message);
+  }
+});

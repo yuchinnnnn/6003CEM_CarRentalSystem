@@ -14,9 +14,11 @@ dotenv.config();
 
 const authRoutes = require('../routes/auth.js');
 const wishlistRoutes = require('../routes/wishlist.js');
+const userRoutes = require('../routes/user');
+
 const { modelName } = require('../models/User.js');
 // const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzQ5NTI3MTMxLCJpYXQiOjE3NDg5MjIzMzEsImp0aSI6IjdmNTVjM2NkLTljZTAtNDc4Yi04MDQ1LWVkNjc2YWY1ZmZhMyIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.6IyFXpJNaBCNzlVMMU-Hf2FHCvLjdLHpH-uXNJXwqxA';
-const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiYXVkIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiZXhwIjoxNzQ5ODMyNTA0LCJpYXQiOjE3NDkyMjc3MDQsImp0aSI6IjhlOGI2Yjk5LWFkMzYtNDY3Mi05YjRjLWM3MTMxMTcwYjk3OSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.PWNUsPn2fake9SJMoGuZehkAh-LyUMVLfwfjuX1Vlq0';
+const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzUwMTQzMjE2LCJpYXQiOjE3NDk1Mzg0MTYsImp0aSI6IjQwYTIzZmM0LWM4NjAtNDczYi1iOWJjLTFkY2NiNGMxNDQ1YSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.PP2hkV_yjQyTWVR0Q9UhdgF8-N5ToX0wwLeP6RcML2Y';
 const CARSXE_API = '6hzkyx7xq_ueu31sjx3_baqauxwg8';
 
 const app = express();
@@ -140,7 +142,6 @@ app.get('/api/car-details', async (req, res) => {
   }
 });
 
-
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -149,6 +150,9 @@ mongoose.connect(process.env.MONGO_URI, {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/user', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+

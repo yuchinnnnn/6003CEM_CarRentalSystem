@@ -234,3 +234,19 @@ body{
         margin: 20px;
     }
 }
+
+.show-pass {
+  position: absolute;
+  top: 50%;
+  right: 50px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--secondary-color);
+}
+
+.show-pass:active i {
+  color: var(--primary-color);
+}

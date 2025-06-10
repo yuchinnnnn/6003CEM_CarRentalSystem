@@ -132,3 +132,13 @@ fetch('http://localhost:5000/api/cars')
     console.error('Error fetching cars:', err);
   });
 ;
+
+document.getElementById('closeFilterBtn').addEventListener('click', () => {
+  const sidebar = document.getElementById('filterSidebar');
+  sidebar.classList.add('hidden');
+});
+
+document.getElementById('openFilterBtn').addEventListener('click', () => {
+  const sidebar = document.getElementById('filterSidebar');
+  sidebar.classList.remove('hidden');
+});
