@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Car Details</title>
+  <link rel="stylesheet" href="../css/carlist.css" />
+  <link rel="stylesheet" href="../css/navbar.css" />
+  <link rel="stylesheet" href="../css/car-details.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
+</head>
+<body>
+
+  <!-- NavBar -->
+  <header>
+    <div class="navbar">  
+      <img src="../assets/logo.png" alt="logo">
+      <div class="center-nav">
+        <a href="/">Home</a>
+        <a href="/carlist">Carlist</a>
+        <a href="/about">About Us</a>
+        <a id="accountLink" href="/login">Account</a>
+      </div>
+      <div class="social">
+        <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="#"><i class="fa-solid fa-bookmark"></i></a>
+        <a href="#"><i class="fa-solid fa-bell"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <img id="carImage" class="car-img" src="" alt="Car Image" />
+    <div class="car-info">
+      <h2 id="carTitle">Car Name</h2>
+      <div class="car-meta">
+        <span id="carYear">Year: </span>
+        <span id="carPrice">Price: </span>
+        <span id="carTypes">Type(s): </span>
+        <span id="carSeats">Seats: </span>
+        <span id="carFuel">Fuel: </span>
+        <span id="carTransmission">Transmission: </span>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="booking-form">
+      <h3>Book This Car</h3>
+      <form id="bookingForm">
+        <label>Start Date:</label>
+        <input type="date" id="startDate" required />
+        <label>End Date:</label>
+        <input type="date" id="endDate" required />
+        <button type="submit">Confirm Booking</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/car-details.js"></script>
+</body>
+</html>

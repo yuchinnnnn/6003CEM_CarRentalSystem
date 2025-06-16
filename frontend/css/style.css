@@ -21,12 +21,12 @@ header {
 
 .layout {
   display: flex;
-  min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
 }
 
 .text {
+  margin: 50px 50px 20px 100px;
   letter-spacing: 1px;
   animation: fadeInUp 1s ease-in-out;
 }

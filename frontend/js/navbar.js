@@ -4,6 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (username && accountLink) {
     accountLink.textContent = username;
-    accountLink.href = "/pages/account.html";
+    accountLink.href = "/account";
   }
 });

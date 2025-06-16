@@ -1,144 +1,122 @@
-const API_KEY = 'a2f9f09c-355e-4e43-8a70-8b6790844032';
 const carList = document.getElementById('carList');
+const filterBtn = document.getElementById('applyFilter');
+let allCars = [];
+let filteredCars = [];
+const carsPerPage = 10;
+let currentPage = 1;
 
 document.getElementById('searchButton').addEventListener('click', () => {
   const query = document.getElementById('searchInput').value.trim().toLowerCase();
-  const cars = document.querySelectorAll('.car-card'); // assuming each car is rendered in a div with class "car-card"
-
-  cars.forEach(car => {
-    const text = car.textContent.toLowerCase();
-    car.style.display = text.includes(query) ? 'block' : 'none';
+  document.querySelectorAll('.car-card').forEach(car => {
+    car.style.display = car.textContent.toLowerCase().includes(query) ? 'block' : 'none';
   });
 });
 
+document.getElementById('closeFilterBtn').addEventListener('click', () => {
+  document.getElementById('filterSidebar').classList.add('hidden');
+});
+document.getElementById('openFilterBtn').addEventListener('click', () => {
+  document.getElementById('filterSidebar').classList.remove('hidden');
+});
 
-// document.getElementById('filterButton').addEventListener('click', () => {
-//   const filterOptions = document.getElementById('filterOptions');
-//   filterOptions.classList.toggle('show');
-// });
+filterBtn.addEventListener('click', () => {
+  applyFilters();
+  renderCars(1);
+  renderPagination();
+  document.getElementById('filterSidebar').classList.add('hidden');
+});
 
+function applyFilters() {
+  const type = document.getElementById('carType').value;
+  const brand = document.getElementById('carBrand').value;
+  const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+  const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
+
+  filteredCars = allCars.filter(car => {
+    const make = car.make || 'Unknown';
+    const msrp = car.msrp || 20000;
+    const carTypeMatch = !type || (car.body_type || '').toLowerCase() === type.toLowerCase();
+    const brandMatch = !brand || make.toLowerCase() === brand.toLowerCase();
+    const priceMatch = msrp / 100 >= minPrice && msrp / 100 <= maxPrice;
+    return carTypeMatch && brandMatch && priceMatch;
+  });
+}
+
+function renderCars(page) {
+  carList.innerHTML = '';
+  const start = (page - 1) * carsPerPage;
+  const carsToShow = filteredCars.slice(start, start + carsPerPage);
+
+  carsToShow.forEach(car => {
+    const make = car.make || 'Unknown';
+    const model = car.name || 'Model';
+    const year = car.year || '2020';
+    const imageId = `car-img-${make}-${model}-${year}`.replace(/\s+/g, '-');
+    const image = car.image || 'https://placehold.co/300x180?text=Loading...';
+    const msrp = car.msrp || 25000;
+    const price = Math.floor(msrp / 100);
+    const economy = (Math.random() * 5 + 4).toFixed(1);
+
+    const carDetailsUrl = `/car-details?trim_id=${car.id}&make=${make}&model=${model}&year=${year}&price=${price}&image=${encodeURIComponent(image)}`;
+
+    const card = document.createElement('div');
+    card.className = 'car-card';
+    card.innerHTML = `
+      <img id="${imageId}" src="${image}" alt="${make} ${model}">
+      <div class="card-content">
+        <h3>${make} ${model}</h3>
+        <span class="year-badge">${year}</span>
+        <div class="card-icons">
+          <div><i>👥</i> ${car.seats || 4} People</div>
+          <div><i>⚡</i> Gasoline</div>
+        </div>
+        <div class="card-icons">
+          <div><i>⛽</i> ${economy}km / 1-litre</div>
+          <div><i>🔧</i> Automatic</div>
+        </div>
+        <div class="price-rent">
+          <div class="price">$${price} / month</div>
+          <a href="${carDetailsUrl}" class="btn rent-now">RENT NOW</a>
+        </div>
+      </div>
+    `;
+
+    carList.appendChild(card);
+  });
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const totalPages = Math.ceil(filteredCars.length / carsPerPage);
+  const container = document.getElementById("paginationControls");
+  container.innerHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.className = i === currentPage ? "active" : "";
+    btn.addEventListener("click", () => {
+      currentPage = i;
+      renderCars(currentPage);
+    });
+    container.appendChild(btn);
+  }
+}
 
 fetch('http://localhost:5000/api/cars')
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to fetch cars');
+    return res.json();
+  })
   .then(data => {
-    console.log("Data from backend:", data);
-
-    data.forEach(car => {
-      
-      const make = car.make || 'Unknown';
-      const model = car.name || 'Model';
-      const year = car.year || 'N/A';
-      const imageId = `car-img-${make}-${model}-${year}`.replace(/\s+/g, '-'); // sanitize for id
-      const image = car.image || 'https://placehold.co/300x180?text=Loading...&font=roboto';
-      const imgEl = document.getElementById(imageId);
-      if (imgEl && imageData.image) {
-        imgEl.src = imageData.image;
-      }
-      const msrp = car.msrp || (Math.floor(Math.random() * 20000) + 20000); // Simulate if missing
-
-      const fuelType = car.fuel_type || 'Gasoline';
-      const transmission = car.transmission || 'Automatic';
-      const passengers = Array.isArray(car.seats) ? car.seats[0] : (car.seats || 4);
-      const economy = (Math.random() * 5 + 4).toFixed(1); // Fake fuel economy
-      
-      const card = document.createElement('div');
-      card.className = 'car-card';
-      card.innerHTML = `
-        <img id="${imageId}" src="${image}" alt="${make} ${model}">
-        <div class="card-content">
-          <h3>${make} ${model}</h3>
-          <span class="year-badge">${year}</span>
-          <div class="card-icons">
-            <div><i>👥</i> <span id="seats-${imageId}">Loading...</span> People</div>
-            <div><i>⚡</i> ${fuelType}</div>
-          </div>
-          <div class="card-icons">
-            <div><i>⛽</i> ${economy}km / 1-litre</div>
-            <div><i>🔧</i> ${transmission}</div>
-          </div>
-          <div class="price-rent">
-            <div class="price">$${Math.floor(msrp / 100)} / month</div>
-            <button>Rent now</button>
-          </div>
-        </div>
-      `;
-      carList.appendChild(card);
-
-      // 🔽 Fetch image from backend and update the image element
-      fetch(`http://localhost:5000/api/car-image?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year}`)
-        .then(res => res.json())
-        .then(imageData => {
-          const imgEl = document.getElementById(imageId);
-          if (imgEl && imageData.image) {
-            imgEl.src = imageData.image;
-          }
-        })
-        .catch(() => {
-          const imgEl = document.getElementById(imageId);
-          if (imgEl) {
-            imgEl.src = 'https://placehold.co/300x180?text=No+Image';
-          }
-        });
-
-            // ✅ Fetch car seats from /api/car-details
-    fetch(`http://localhost:5000/api/car-details?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`)
-        .then(res => res.json())
-        .then(detailData => {
-          const seatEl = document.getElementById(`seats-${imageId}`);
-          if (seatEl && Array.isArray(detailData.seats)) {
-            seatEl.textContent = detailData.seats[0];
-          } else if (seatEl) {
-            seatEl.textContent = detailData.seats || 'N/A';
-          }
-        })
-        .catch(() => {
-          const seatEl = document.getElementById(`seats-${imageId}`);
-          if (seatEl) {
-            seatEl.textContent = 'N/A';
-          }
-        });
-
-    });
-
-
-
-
-
-      // // Then fetch image separately
-      // if (make && model && year) {
-      //   fetch(`http://localhost:5000/api/car-image?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year}`)
-      //     .then(res => res.json())
-      //     .then(imageData => {
-      //       const imgEl = document.getElementById(`car-img-${make}-${model}-${year}`);
-      //       if (imgEl) {
-      //         imgEl.src = imageData.image;
-      //       }
-      //     })
-      //     .catch(() => {
-      //       const imgEl = document.getElementById(`car-img-${make}-${model}-${year}`);
-      //       if (imgEl) {
-      //         imgEl.src = 'https://placehold.co/300x180?text=No+Image';
-      //       }
-      //     });
-      // } else {
-      //   const imgEl = document.getElementById(`car-img-${make}-${model}-${year}`);
-      //   if (imgEl) {
-      //     imgEl.src = 'https://placehold.co/300x180?text=No+Image';
-      //   }
-      // }
-
+    if (!Array.isArray(data)) throw new Error('Unexpected data format');
+    allCars = data;
+    filteredCars = allCars;
+    renderCars(currentPage);
+    renderPagination();
   })
   .catch(err => {
     console.error('Error fetching cars:', err);
+    document.getElementById("carList").innerHTML = "<p class='error'>Failed to load cars. Try again later.</p>";
   });
-;
-
-document.getElementById('closeFilterBtn').addEventListener('click', () => {
-  const sidebar = document.getElementById('filterSidebar');
-  sidebar.classList.add('hidden');
-});
-
-document.getElementById('openFilterBtn').addEventListener('click', () => {
-  const sidebar = document.getElementById('filterSidebar');
-  sidebar.classList.remove('hidden');
-});
