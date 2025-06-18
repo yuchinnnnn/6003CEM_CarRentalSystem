@@ -4,68 +4,82 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const axios = require('axios');
 const xml2js = require('xml2js');
+
 const NodeCache = require("node-cache");
+const ONE_MONTH = 30 * 24 * 60 * 60; // 30 days in seconds
+const carCache = new NodeCache({ stdTTL: ONE_MONTH });
+const detailsCache = new NodeCache({ stdTTL: ONE_MONTH });
 
 require('dotenv').config();
 
 const authRoutes = require('../routes/auth.js');
 const wishlistRoutes = require('../routes/wishlist.js');
+const { modelName } = require('../models/User.js');
 const userRoutes = require('../routes/user');
 const bookingRoutes = require('../routes/booking.js');
 
-const ONE_MONTH = 30 * 24 * 60 * 60;
-const carCache = new NodeCache({ stdTTL: ONE_MONTH });
-const detailsCache = new NodeCache({ stdTTL: ONE_MONTH });
 
 // API keys
 const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiYXVkIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiZXhwIjoxNzUwNzg1MDk5LCJpYXQiOjE3NTAxODAyOTksImp0aSI6ImU5NGVkMGZkLTkwMzAtNDJiNC05MTI2LWQ4MzE4ZjMzZTE1YSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.pLEUpLSbDpc4NeeHD2P93q6tXdeGDaJumbu-xB_-a6g';
 const CARSXE_API = '6hzkyx7xq_ueu31sjx3_baqauxwg8';
+const EMAIL_API = '35924de5c3aa0c41819bd0e34bd121ee';
 
 const app = express();
 app.use(cors({
-  origin: '*',
+  origin: '*', // or 'http://localhost:5500' if you want to be strict
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
-/* EXISTING: Fetch cars */
+/* Fetch cars */
 app.get('/api/cars', async (req, res) => {
-  const { year = 2020 } = req.query;
-
-  // Check cache first
-  const cacheKey = `cars_${year}`;  
-  const cached = carCache.get(cacheKey);
-  if (cached){
-    console.log('✅ Using cached data');
-    return res.json(cached);
-  }
-
-  console.log('🔄 Fetching fresh data from API');
-
   try {
+    const { year = 2020 } = req.query;
+
+    // Check cache first
+    const cacheKey = `cars_${year}`;
+    const cached = carCache.get(cacheKey);
+    if (cached) {
+      console.log('✅ Using cached data');
+      return res.json({ fromCache: true, data: cached });
+    }
+
+    console.log('🔄 Fetching fresh data from API');
+
     const totalPages = 5;
     const allModels = [];
 
     for (let page = 1; page <= totalPages; page++) {
       const response = await axios.get('https://carapi.app/api/models/v2', {
-        headers: { Authorization: `Bearer ${API_KEY}` },
-        params: { year, page },
+        headers: { Authorization: `Bearer ${API_KEY}`},
+        params: { year, page }
       });
       // console.log('Calling Car API with:', { year, page });
       allModels.push(...response.data.data);
     }
 
+    // Save to cache
     carCache.set(cacheKey, allModels);
-    res.json(allModels);
+
+    res.json(allModels); // Send the combined array
   } catch (error) {
-    console.error('Car API error:', error.message);
+    if (error.response) {
+      console.error('🔴 API Response Error:');
+      console.error('Status:', error.response.status);
+      console.error('Data:', error.response.data);
+    } else if (error.request) {
+      console.error('🔴 No response received:', error.request);
+    } else {
+      console.error('🔴 Error setting up request:', error.message);
+    }
+
     res.status(500).json({ error: 'Failed to fetch car data' });
   }
 
 });
 
-/* EXISTING: Fetch image from CarImagery */
+/* Fetch image from CarImagery */
 app.get('/api/car-image', async (req, res) => {
   const { make, model, year } = req.query;
   if (!make || !model || !year) {
@@ -85,7 +99,7 @@ app.get('/api/car-image', async (req, res) => {
   }
 });
 
-/* EXISTING: Basic car detail fetch by make/model/year */
+/* Basic car detail fetch by make/model/year */
 app.get('/api/car-details', async (req, res) => {
   const { make, model, year = 2020 } = req.query;
   const cacheKey = `details_${make}_${model}_${year}`;
@@ -118,7 +132,42 @@ app.get('/api/car-details', async (req, res) => {
   }
 });
 
-/* ✅ NEW: Proxy for detailed trim info */
+
+app.get('/api/validate-email', async (req, res) => {
+  const email = req.query.email;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+    const response = await axios.get('http://apilayer.net/api/check', {
+      params: {
+        access_key: EMAIL_API,
+        email: email,
+        smtp: 1,
+        format: 1
+      }
+    });
+
+    const data = response.data;
+
+    res.json({
+      success: true,
+      email: data.email,
+      format_valid: data.format_valid,
+      smtp_check: data.smtp_check,
+      score: data.score,
+      did_you_mean: data.did_you_mean,
+      disposable: data.disposable,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'MailboxLayer API request failed', details: error.message });
+  }
+});
+
+
+/*Proxy for detailed trim info */
 app.get('/api/trim-details/:trimId', async (req, res) => {
   const { trimId } = req.params;
   const cacheKey = `trim_${trimId}`;
@@ -160,6 +209,8 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
-/* Start Server */
+app.use('/api/auth', authRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

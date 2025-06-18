@@ -110,6 +110,21 @@ registerForm.addEventListener("submit", async (e) => {
   const formData = new FormData(registerForm);
   const data = Object.fromEntries(formData.entries());
 
+  // Step 1: Validate email via your backend (MailboxLayer)
+  try {
+    const emailCheckRes = await fetch(`http://localhost:5000/api/validate-email?email=${encodeURIComponent(data.email)}`);
+    const emailCheck = await emailCheckRes.json();
+
+    if (!emailCheck.format_valid || !emailCheck.smtp_check) {
+      alert("❌ Please enter a valid email address.");
+      return; // Stop registration if email is invalid
+    }
+  } catch (error) {
+    alert("⚠️ Failed to validate email. Please try again.");
+    return;
+  }
+
+// Step 2: Proceed with registration
   try {
     const res = await fetch("http://localhost:5000/api/auth/register", {
       method: "POST",
