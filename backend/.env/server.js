@@ -10,13 +10,17 @@ const ONE_MONTH = 30 * 24 * 60 * 60; // 30 days in seconds
 const carCache = new NodeCache({ stdTTL: ONE_MONTH });
 const detailsCache = new NodeCache({ stdTTL: ONE_MONTH });
 
-dotenv.config();
+require('dotenv').config();
 
 const authRoutes = require('../routes/auth.js');
 const wishlistRoutes = require('../routes/wishlist.js');
 const { modelName } = require('../models/User.js');
-// const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzQ5NTI3MTMxLCJpYXQiOjE3NDg5MjIzMzEsImp0aSI6IjdmNTVjM2NkLTljZTAtNDc4Yi04MDQ1LWVkNjc2YWY1ZmZhMyIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.6IyFXpJNaBCNzlVMMU-Hf2FHCvLjdLHpH-uXNJXwqxA';
-const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiYXVkIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiZXhwIjoxNzUwNzQ3NzkzLCJpYXQiOjE3NTAxNDI5OTMsImp0aSI6IjhkODgzZTBmLTQ4YzUtNGY3MC05NjcwLTBlM2FlN2FiNmM2YiIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.chPyq6TVNfBhjM29K9GUvOWq9txKw_voc22Qw0d1mmI';
+const userRoutes = require('../routes/user');
+const bookingRoutes = require('../routes/booking.js');
+
+
+// API keys
+const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiYXVkIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiZXhwIjoxNzUwNzg1MDk5LCJpYXQiOjE3NTAxODAyOTksImp0aSI6ImU5NGVkMGZkLTkwMzAtNDJiNC05MTI2LWQ4MzE4ZjMzZTE1YSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.pLEUpLSbDpc4NeeHD2P93q6tXdeGDaJumbu-xB_-a6g';
 const CARSXE_API = '6hzkyx7xq_ueu31sjx3_baqauxwg8';
 const EMAIL_API = '35924de5c3aa0c41819bd0e34bd121ee';
 
@@ -28,6 +32,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
+/* Fetch cars */
 app.get('/api/cars', async (req, res) => {
   try {
     const { year = 2020 } = req.query;
@@ -50,9 +55,8 @@ app.get('/api/cars', async (req, res) => {
         headers: { Authorization: `Bearer ${API_KEY}`},
         params: { year, page }
       });
-
-      const models = response.data.data || response.data; // Adjust if structure differs
-      allModels.push(...models);
+      // console.log('Calling Car API with:', { year, page });
+      allModels.push(...response.data.data);
     }
 
     // Save to cache
@@ -72,44 +76,34 @@ app.get('/api/cars', async (req, res) => {
 
     res.status(500).json({ error: 'Failed to fetch car data' });
   }
+
 });
 
+/* Fetch image from CarImagery */
 app.get('/api/car-image', async (req, res) => {
   const { make, model, year } = req.query;
-
   if (!make || !model || !year) {
     return res.status(400).json({ error: 'Missing make, model, or year' });
   }
 
   try {
     const searchTerm = `${make} ${model}`;
-    const response = await axios.get(`https://www.carimagery.com/api.asmx/GetImageUrl?searchTerm=2020${encodeURIComponent(searchTerm)}`);
-    
-    const parser = new xml2js.Parser();
-    parser.parseString(response.data, (err, result) => {
-      if (err) {
-        console.error('XML parse error:', err);
-        return res.status(500).json({ image: 'https://placehold.co/300x180?text=No+Image&font=roboto' });
-      }
-
-      const imageUrl = result?.string?._ || 'https://placehold.co/300x180?text=No+Image&font=roboto';
+    const response = await axios.get(`https://www.carimagery.com/api.asmx/GetImageUrl?searchTerm=${year}${encodeURIComponent(searchTerm)}`);
+    xml2js.parseString(response.data, (err, result) => {
+      const imageUrl = result?.string?._ || 'https://placehold.co/300x180?text=No+Image';
       res.json({ image: imageUrl });
     });
-
   } catch (error) {
     console.error('Image fetch error:', error.message);
-    res.status(500).json({ image: 'https://placehold.co/300x180?text=No+Image&font=roboto' });
+    res.status(500).json({ image: 'https://placehold.co/300x180?text=No+Image' });
   }
 });
 
+/* Basic car detail fetch by make/model/year */
 app.get('/api/car-details', async (req, res) => {
   const { make, model, year = 2020 } = req.query;
   const cacheKey = `details_${make}_${model}_${year}`;
-
-  // cache data
-  if (detailsCache.has(cacheKey)) {
-    return res.json(detailsCache.get(cacheKey));
-  }
+  if (detailsCache.has(cacheKey)) return res.json(detailsCache.get(cacheKey));
 
   if (!make || !model || !year) {
     return res.status(400).json({ error: 'Missing make, model, or year' });
@@ -122,24 +116,22 @@ app.get('/api/car-details', async (req, res) => {
     });
 
     const carTrims = response.data?.data;
-
     if (!carTrims || carTrims.length === 0) {
-      return res.status(404).json({ error: 'No car data found for this make/model/year' });
+      return res.status(404).json({ error: 'No car data found' });
     }
 
-    // Extract unique types and seats from the trims
-    const uniqueTypes = [...new Set(carTrims.map(car => car.type))];
-    const uniqueSeats = [...new Set(carTrims.map(car => car.seats))];
+    const types = [...new Set(carTrims.map(car => car.type))];
+    const seats = [...new Set(carTrims.map(car => car.seats))];
 
-    const result = { make, model, year, types: uniqueTypes, seats: uniqueSeats };
+    const result = { make, model, year, types, seats };
     detailsCache.set(cacheKey, result);
     res.json(result);
-
   } catch (error) {
     console.error('Car details fetch error:', error.message);
     res.status(500).json({ error: 'Failed to fetch car details' });
   }
 });
+
 
 app.get('/api/validate-email', async (req, res) => {
   const email = req.query.email;
@@ -174,6 +166,43 @@ app.get('/api/validate-email', async (req, res) => {
   }
 });
 
+
+/*Proxy for detailed trim info */
+app.get('/api/trim-details/:trimId', async (req, res) => {
+  const { trimId } = req.params;
+  const cacheKey = `trim_${trimId}`;
+  if (detailsCache.has(cacheKey)) return res.json(detailsCache.get(cacheKey));
+
+  try {
+    const response = await axios.get(`https://carapi.app/api/trims/v2/${trimId}`, {
+      headers: { Authorization: `Bearer ${API_KEY}` }
+    });
+
+    const data = response.data;
+    detailsCache.set(cacheKey, data);
+    res.json(data);
+  } catch (error) {
+    const status = error.response?.status;
+    const message = error.response?.data?.message || error.message;
+
+    if (status === 401 || status === 402) {
+      console.warn(`Trim ID ${trimId} skipped: ${message}`);
+      return res.status(204).json({ skip: true }); // 204 = No Content
+    }
+
+    console.error('Trim details fetch error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch trim details' });
+  }
+});
+
+
+/* Routes */
+app.use('/api/auth', authRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/bookings', bookingRoutes);
+
+/* MongoDB Connection */
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true

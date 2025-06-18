@@ -5,6 +5,9 @@ let filteredCars = [];
 const carsPerPage = 10;
 let currentPage = 1;
 
+const trimDetailsCache = new Map();
+
+
 document.getElementById('searchButton').addEventListener('click', () => {
   const query = document.getElementById('searchInput').value.trim().toLowerCase();
   document.querySelectorAll('.car-card').forEach(car => {
@@ -48,15 +51,18 @@ function renderCars(page) {
   const carsToShow = filteredCars.slice(start, start + carsPerPage);
 
   carsToShow.forEach(car => {
+    
     const make = car.make || 'Unknown';
     const model = car.name || 'Model';
     const year = car.year || '2020';
-    const imageId = `car-img-${make}-${model}-${year}`.replace(/\s+/g, '-');
-    const image = car.image || 'https://placehold.co/300x180?text=Loading...';
+    const image = car.image || 'https://placehold.co/300x180?text=No+Image';
     const msrp = car.msrp || 25000;
     const price = Math.floor(msrp / 100);
-    const economy = (Math.random() * 5 + 4).toFixed(1);
+    const seats = car.seats || 4;
+    const fuel = car.fuel_type || 'Gasoline';
+    const transmission = car.transmission || 'Automatic';
 
+    const imageId = `car-img-${car.id}`
     const carDetailsUrl = `/car-details?trim_id=${car.id}&make=${make}&model=${model}&year=${year}&price=${price}&image=${encodeURIComponent(image)}`;
 
     const card = document.createElement('div');
@@ -67,21 +73,39 @@ function renderCars(page) {
         <h3>${make} ${model}</h3>
         <span class="year-badge">${year}</span>
         <div class="card-icons">
-          <div><i>👥</i> ${car.seats || 4} People</div>
-          <div><i>⚡</i> Gasoline</div>
+          <div><i>👥</i> ${seats} People</div>
+          <div><i>⚡</i> ${fuel}</div>
         </div>
         <div class="card-icons">
-          <div><i>⛽</i> ${economy}km / 1-litre</div>
-          <div><i>🔧</i> Automatic</div>
+          <div><i>🔧</i> ${transmission}</div>
         </div>
         <div class="price-rent">
           <div class="price">$${price} / month</div>
-          <a href="${carDetailsUrl}" class="btn rent-now">RENT NOW</a>
+          <a href="${carDetailsUrl}" class="btn rent-now">
+            <button>Rent Now</button>
+          </a>
         </div>
       </div>
     `;
 
     carList.appendChild(card);
+    
+    // 🔽 Fetch image from backend and update the image element
+    fetch(`http://localhost:5000/api/car-image?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year}`)
+      .then(res => res.json())
+      .then(imageData => {
+        const imgEl = document.getElementById(imageId);
+        if (imgEl && imageData.image) {
+          imgEl.src = imageData.image;
+        }
+      })
+      .catch(() => {
+        const imgEl = document.getElementById(imageId);
+        if (imgEl) {
+          imgEl.src = 'https://placehold.co/300x180?text=No+Image';
+        }
+      });
+
   });
 
   renderPagination();
@@ -104,19 +128,60 @@ function renderPagination() {
   }
 }
 
+// Fetch base list, then enrich each car with trim-details
 fetch('http://localhost:5000/api/cars')
   .then(res => {
     if (!res.ok) throw new Error('Failed to fetch cars');
     return res.json();
   })
-  .then(data => {
-    if (!Array.isArray(data)) throw new Error('Unexpected data format');
-    allCars = data;
+  .then(async baseCars => {
+    const enriched = [];
+    const maxCars = 10;
+    let index = 0;
+
+    while (enriched.length < maxCars && index < baseCars.length) {
+      const car = baseCars[index];
+      index++;
+
+      try {
+        if (trimDetailsCache.has(car.id)) {
+          const details = trimDetailsCache.get(car.id);
+          enriched.push({
+            ...car,
+            msrp: details.msrp,
+            seats: details.bodies?.[0]?.seats,
+            fuel_type: details.engines?.[0]?.fuel_type,
+            transmission: details.transmissions?.[0]?.description
+          });
+          continue;
+        }
+
+        const res = await fetch(`http://localhost:5000/api/trim-details/${car.id}`);
+        if (res.status === 402) {
+          console.warn(`Skipping trim ${car.id} due to 402`);
+          continue;
+        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const details = await res.json();
+        trimDetailsCache.set(car.id, details);
+
+        enriched.push({
+          ...car,
+          msrp: details.msrp,
+          seats: details.bodies?.[0]?.seats,
+          fuel_type: details.engines?.[0]?.fuel_type,
+          transmission: details.transmissions?.[0]?.description
+        });
+      } catch (err) {
+        console.warn(`Trim ${car.id} failed: ${err.message}`);
+      }
+    }
+    allCars = enriched;
     filteredCars = allCars;
     renderCars(currentPage);
     renderPagination();
   })
   .catch(err => {
     console.error('Error fetching cars:', err);
-    document.getElementById("carList").innerHTML = "<p class='error'>Failed to load cars. Try again later.</p>";
+    carList.innerHTML = "<p class='error'>Failed to load cars. Try again later.</p>";
   });

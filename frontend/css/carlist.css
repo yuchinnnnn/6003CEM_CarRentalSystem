@@ -18,85 +18,11 @@ header {
   animation: fadeIn 1s ease-in-out;
 }
 
-/* .navbar {
-  width: 94%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 40px;
-  background-color: #1a1a1a;
-  border-bottom: 1px solid #2a2a2a;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-
-.navbar img {
-  width: 50px;
-  animation: rotateIn 1s ease-in-out;
-}
-
-Center Nav
-.center-nav {
-  display: flex;
-  gap: 35px;
-}
-
-.center-nav a {
-  color: white;
-  font-size: 1.1rem;
-  text-decoration: none;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  transition: all 0.3s ease;
-  position: relative;
-} */
-
 /* Highlight active link */
 .center-nav a:nth-child(2) {
   color: orange;
 }
 
-/* .center-nav a:hover,
-.social a:hover {
-  color: orange;
-  text-shadow: 0px 0px 10px rgba(255, 140, 0, 0.8);
-}
-
-.center-nav a::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  background-color: orange;
-  bottom: -5px;
-  left: 0;
-  transform: scaleX(0);
-  transition: transform 0.3s ease-in-out;
-}
-
-.center-nav a:hover::before {
-  transform: scaleX(1);
-} */
-
-/* Social Icons
-.social {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.social i {
-  font-size: 1.2rem;
-  color: #f0f0f0;
-  transition: color 0.3s ease, transform 0.2s;
-}
-
-.social i:hover {
-  color: rgb(255,140,0);
-  transform: scale(1.2);
-} */
 
 .nav{
     position: fixed;
@@ -311,10 +237,13 @@ Center Nav
 .car-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 16px rgba(173, 173, 173, 0.05);
   overflow: hidden;
   width: 300px;
   transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .car-card:hover {
@@ -328,26 +257,45 @@ Center Nav
 }
 
 .card-content {
-  padding: 16px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 281px;
 }
+
 
 .card-content h3 {
   color: rgb(255,140,0);
+  margin-left: 30px;
 }
 
 .card-content .year-badge {
   background: rgba(255,140,0, 0.2);
   border: 1px solid orange;
   color: orange;
+  font-weight: 600;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
 }
 
 .card-icons {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-top: 10px;
   color: #555;
   font-size: 14px;
+  min-height: 40px;
+}
+
+.card-icons > div {
+  flex: 1 1 45%;
+  background-color: #f9f9f9;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-icons i {
@@ -355,11 +303,14 @@ Center Nav
 }
 
 .price-rent {
+  margin-top: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 15px;
+  padding: 10px;
+  border-top: 1px solid #eee;
 }
+
 
 .price {
   font-size: 20px;
