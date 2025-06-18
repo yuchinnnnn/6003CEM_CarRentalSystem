@@ -6,20 +6,19 @@ const axios = require('axios');
 const xml2js = require('xml2js');
 const NodeCache = require("node-cache");
 
-dotenv.config();
+require('dotenv').config();
 
 const authRoutes = require('../routes/auth.js');
 const wishlistRoutes = require('../routes/wishlist.js');
 const userRoutes = require('../routes/user');
-const bookingRoutes = require('../routes/booking');
+const bookingRoutes = require('../routes/booking.js');
 
 const ONE_MONTH = 30 * 24 * 60 * 60;
 const carCache = new NodeCache({ stdTTL: ONE_MONTH });
 const detailsCache = new NodeCache({ stdTTL: ONE_MONTH });
 
-
-// const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzQ5NTI3MTMxLCJpYXQiOjE3NDg5MjIzMzEsImp0aSI6IjdmNTVjM2NkLTljZTAtNDc4Yi04MDQ1LWVkNjc2YWY1ZmZhMyIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.6IyFXpJNaBCNzlVMMU-Hf2FHCvLjdLHpH-uXNJXwqxA';
-const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzUwMTQzMjE2LCJpYXQiOjE3NDk1Mzg0MTYsImp0aSI6IjQwYTIzZmM0LWM4NjAtNDczYi1iOWJjLTFkY2NiNGMxNDQ1YSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.PP2hkV_yjQyTWVR0Q9UhdgF8-N5ToX0wwLeP6RcML2Y';
+// API keys
+const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiYXVkIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiZXhwIjoxNzUwNzg1MDk5LCJpYXQiOjE3NTAxODAyOTksImp0aSI6ImU5NGVkMGZkLTkwMzAtNDJiNC05MTI2LWQ4MzE4ZjMzZTE1YSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.pLEUpLSbDpc4NeeHD2P93q6tXdeGDaJumbu-xB_-a6g';
 const CARSXE_API = '6hzkyx7xq_ueu31sjx3_baqauxwg8';
 
 const app = express();
@@ -53,7 +52,7 @@ app.get('/api/cars', async (req, res) => {
         headers: { Authorization: `Bearer ${API_KEY}` },
         params: { year, page },
       });
-      console.log('Calling Car API with:', { year, page });
+      // console.log('Calling Car API with:', { year, page });
       allModels.push(...response.data.data);
     }
 
@@ -63,7 +62,7 @@ app.get('/api/cars', async (req, res) => {
     console.error('Car API error:', error.message);
     res.status(500).json({ error: 'Failed to fetch car data' });
   }
-  
+
 });
 
 /* EXISTING: Fetch image from CarImagery */
@@ -134,10 +133,19 @@ app.get('/api/trim-details/:trimId', async (req, res) => {
     detailsCache.set(cacheKey, data);
     res.json(data);
   } catch (error) {
+    const status = error.response?.status;
+    const message = error.response?.data?.message || error.message;
+
+    if (status === 401 || status === 402) {
+      console.warn(`Trim ID ${trimId} skipped: ${message}`);
+      return res.status(204).json({ skip: true }); // 204 = No Content
+    }
+
     console.error('Trim details fetch error:', error.message);
     res.status(500).json({ error: 'Failed to fetch trim details' });
   }
 });
+
 
 /* Routes */
 app.use('/api/auth', authRoutes);
