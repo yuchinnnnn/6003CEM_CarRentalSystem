@@ -159,9 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (!startDate || !endDate || endDate <= startDate) {
+    if (!startDate || !endDate || endDate < startDate) {
       bookingMessage.textContent = "❌ Please select a valid date range.";
       bookingMessage.style.color = "salmon";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Confirm Booking";
       return;
     }
 

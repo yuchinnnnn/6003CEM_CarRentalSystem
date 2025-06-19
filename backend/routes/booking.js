@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Start date cannot be in the past.' });
     }
 
-    if (end <= start) {
+    if (end < start) {
       return res.status(400).json({ message: 'End date must be after start date.' });
     }
 
