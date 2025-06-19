@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="../css/navbar.css" />
   <link rel="stylesheet" href="../css/car-details.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  
 </head>
 <body>
 
@@ -31,33 +30,62 @@
   </header>
 
   <!-- Main Content -->
-  <div class="container">
-    <img id="carImage" class="car-img" src="" alt="Car Image" />
-    <div class="car-info">
-      <h2 id="carTitle">Car Name</h2>
-      <div class="car-meta">
-        <span id="carYear">Year: </span>
-        <span id="carPrice">Price: </span>
-        <span id="carTypes">Type(s): </span>
-        <span id="carSeats">Seats: </span>
-        <span id="carFuel">Fuel: </span>
-        <span id="carTransmission">Transmission: </span>
-      </div>
-    </div>
+  <div class="container fade-in">
 
-    <!-- Booking Form -->
-    <div class="booking-form">
-      <h3>Book This Car</h3>
-      <form id="bookingForm">
-        <label>Start Date:</label>
-        <input type="date" id="startDate" required />
-        <label>End Date:</label>
-        <input type="date" id="endDate" required />
-        <button type="submit">Confirm Booking</button>
-      </form>
+    <div class="details-grid">
+      <div class="left-panel">
+        <img id="carImage" class="car-img" src="" alt="Car Image" />
+        <div class="car-info">
+          <h2 id="carTitle"><span class="badge">🚗</span>Car Name</h2>
+          <button id="wishlistBtn">🤍 Add to Wishlist</button>
+          <div class="car-meta">
+            <p><strong>Year:</strong> <span id="carYear"></span></p>
+            <p><strong>Price:</strong> <span id="carPrice"></span></p>
+            <p><strong>Type:</strong> <span id="carTypes"></span></p>
+            <p><strong>Seats:</strong> <span id="carSeats"></span></p>
+            <p><strong>Fuel:</strong> <span id="carFuel"></span></p>
+            <p><strong>Transmission:</strong> <span id="carTransmission"></span></p>
+            <p><strong>Drive Type:</strong> <span id="carDrive"></span></p>
+            <p><strong>KMPL:</strong> <span id="carMPG"></span></p>
+            <p><strong>Fuel Tank:</strong> <span id="carTank"></span></p>
+          </div>
+          <button id="toggleSpecs" class="toggle-btn">Show More Details ⬇️</button>
+          <div id="carSpecs" class="specs-section" style="display: none;"></div>
+        </div>
+      </div>
+      <!-- Booking Form -->
+      <div class="right-panel">
+        <div class="booking-form">
+          <h3>Book This Car</h3>
+          <form id="bookingForm">
+            <label><i class="fa-solid fa-calendar-day"></i> Start Date:</label>
+            <input type="date" id="startDate" required />
+            <label>End Date:</label>
+            <input type="date" id="endDate" required />
+            <button type="submit">Confirm Booking</button>
+          </form>
+          <div id="bookingMessage" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+        <div id="postBookingOptions" style="display:none; margin-top: 20px; text-align: center;">
+          <p style="font-weight: bold;">What would you like to do next?</p>
+          <button id="bookAnotherBtn">🚗 Book Another Car</button>
+          <button id="viewBookingsBtn">📋 View My Bookings</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script src="../js/car-details.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script>
+    const toggleBtn = document.getElementById("toggleSpecs");
+    const carSpecs = document.getElementById("carSpecs");
+
+    toggleBtn.addEventListener("click", () => {
+      const isVisible = carSpecs.style.display === "block";
+      carSpecs.style.display = isVisible ? "none" : "block";
+      toggleBtn.innerHTML = isVisible ? "Show More Details ⬇️" : "Hide Details ⬆️";
+    });
+  </script>
 </body>
 </html>
