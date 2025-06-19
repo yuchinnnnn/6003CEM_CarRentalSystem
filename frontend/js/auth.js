@@ -86,6 +86,7 @@ loginForm.addEventListener("submit", async (e) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const user = await userRes.json();
+      console.log("User data:", user);
       if (user.username) {
         localStorage.setItem("username", user.username);
       }

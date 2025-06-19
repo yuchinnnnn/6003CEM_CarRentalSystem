@@ -5,7 +5,9 @@
   <title>Account</title>
   <link rel="stylesheet" href="/css/navbar.css">
   <link rel="stylesheet" href="/css/account.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
   <header class="navbar">
     <!-- Include the same navbar with id="accountLink" -->
@@ -25,23 +27,102 @@
 
   <main class="account-container">
     <h1>Welcome, <span id="usernameDisplay">User</span></h1>
+    <div class="settings-layout">
+      <!-- Sidebar -->
+      <nav class="settings-sidebar">
+        <ul>
+          <li data-target="profile-settings" class="active">
+            <i class="fas fa-user"></i> Profile
+          </li>
+          <li data-target="history-section">
+            <i class="fas fa-history"></i> History
+          </li>
+          <li data-target="settings-section">
+            <i class="fas fa-cog"></i> Settings
+          </li>
+        </ul>
+      </nav>
 
-    <section class="profile-section">
-      <h2>Profile Info</h2>
-      <p><strong>Username:</strong> <span id="profileUsername">-</span></p>
-      <p><strong>Email:</strong> <span id="profileEmail">-</span></p>
-      <p><strong>User ID:</strong> <span id="profileUserId">-</span></p>
-    </section>
+      <div class="setting-content">
+        <section class="profile-settings">
+          <h2>Profile Settings</h2>
 
-    <section class="history-section">
-      <h2>Rental History</h2>
-      <p>Coming soon...</p>
-    </section>
+          <!-- Profile Picture -->
+          <div class="profile-picture-container">
+            <img id="profileImagePreview" src="../assets/default-profile-pic.jpg" alt="Profile Picture" class="profile-image">
+            <div>
+              <input type="file" id="profileImageUpload" accept="image/*">
+              <button class="btn">Upload new picture</button>
+              <button class="btn btn-danger">Delete</button>
+              <p class="note">PNG, JPEG under 15MB</p>
+            </div>
+          </div>
 
-    <section class="settings-section">
-      <h2>Settings</h2>
-      <button id="logoutBtn">🚪 Log out</button>
-    </section>
+          <!-- Full Name -->
+          <div class="form-row">
+              <label for="usernameDisplay">Username
+              <input type="text" id="username" placeholder="Username">
+            </label>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label>Email<span id="profileEmail">-</span></label>
+            <label>User ID<span id="profileUserId">-</span></label>
+          </div>
+
+          <!-- Password -->
+          <div class="form-row">
+            <label>Reset Password
+              <input type="password" id="currentPassword"  placeholder="Enter current password">
+              <input type="password" id="newPassword"  placeholder="Enter new password">
+            </label>
+          </div>
+
+          <!-- Save Button -->
+          <div class="save-section">
+            <button id="saveProfileBtn" class="btn btn-primary">💾 Save changes</button>
+          </div>
+        </section>
+
+        <section class="history-section" style="display: none;">
+          <h2>Rental History</h2>
+          <p>Coming soon...</p>
+        </section>
+
+        <section class="settings-section"  style="display: none;">
+          <h2>Settings</h2>
+
+          <h3>📩 Notification Preferences</h3>
+          <label><input type="checkbox" id="emailNotifs" checked> Email Notifications</label><br>
+          <label><input type="checkbox" id="smsNotifs"> SMS Alerts</label><br>
+          <label><input type="checkbox" id="inAppNotifs" checked> In-App Notifications</label>
+
+          <h3>💳 Payment Settings</h3>
+          <button id="managePaymentBtn" class="edit-btn">Manage Payment Methods</button>
+
+          <h3>🌐 Regional Settings</h3>
+          <label>
+            Language:
+            <select id="languageSetting">
+              <option value="en">English</option>
+              <option value="ms">Malay</option>
+              <option value="zh">Chinese</option>
+            </select>
+          </label><br>
+          <label>
+            Currency:
+            <select id="currencySetting">
+              <option value="myr">MYR</option>
+              <option value="usd">USD</option>
+            </select>
+          </label>
+
+          <hr>
+          <button id="logoutBtn">🚪 Log out</button>
+        </section>
+      </div>
+    </div>  
   </main>
 
   <script src="/js/navbar.js"></script>
