@@ -134,7 +134,10 @@ fetch('http://localhost:5000/api/cars')
     if (!res.ok) throw new Error('Failed to fetch cars');
     return res.json();
   })
-  .then(async baseCars => {
+  // .then(async baseCars => {
+  .then(async response => {
+    const baseCars = Array.isArray(response) ? response : response.data;
+
     const enriched = [];
     const maxCars = 10;
     let index = 0;

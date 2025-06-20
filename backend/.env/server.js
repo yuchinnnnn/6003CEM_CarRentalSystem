@@ -103,7 +103,12 @@ app.get('/api/car-image', async (req, res) => {
 app.get('/api/car-details', async (req, res) => {
   const { make, model, year = 2020 } = req.query;
   const cacheKey = `details_${make}_${model}_${year}`;
-  if (detailsCache.has(cacheKey)) return res.json(detailsCache.get(cacheKey));
+  if (detailsCache.has(cacheKey)) {
+    console.log(`✅ Cache hit for ${cacheKey}`);
+    return res.json(detailsCache.get(cacheKey));
+  } else {
+    console.log(`❌ Cache miss for ${cacheKey}`);
+  }
 
   if (!make || !model || !year) {
     return res.status(400).json({ error: 'Missing make, model, or year' });
@@ -193,6 +198,13 @@ app.get('/api/trim-details/:trimId', async (req, res) => {
     console.error('Trim details fetch error:', error.message);
     res.status(500).json({ error: 'Failed to fetch trim details' });
   }
+});
+
+app.get('/api/debug/cache', (req, res) => {
+  res.json({
+    carKeys: carCache.keys(),
+    detailsKeys: detailsCache.keys()
+  });
 });
 
 
