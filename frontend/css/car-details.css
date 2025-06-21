@@ -159,6 +159,11 @@ body {
   color: #ccc;
 }
 
+.booking-form span {
+  display: block;
+  padding-bottom: 20px;
+}
+
 .booking-form input {
   width: 100%;
   padding: 14px;

@@ -259,7 +259,7 @@ header {
 .card-content {
   display: flex;
   flex-direction: column;
-  height: 281px;
+  height: fit-content;
 }
 
 

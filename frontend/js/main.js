@@ -32,6 +32,7 @@ filterBtn.addEventListener('click', () => {
 function applyFilters() {
   const type = document.getElementById('carType').value;
   const brand = document.getElementById('carBrand').value;
+  const location = document.getElementById('locationFilter').value;
   const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
   const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
 
@@ -41,9 +42,15 @@ function applyFilters() {
     const carTypeMatch = !type || (car.body_type || '').toLowerCase() === type.toLowerCase();
     const brandMatch = !brand || make.toLowerCase() === brand.toLowerCase();
     const priceMatch = msrp / 100 >= minPrice && msrp / 100 <= maxPrice;
-    return carTypeMatch && brandMatch && priceMatch;
+    const locationMatch = !location || (car.location && car.location == location);
+    return carTypeMatch && brandMatch && priceMatch && locationMatch;
   });
 }
+
+// const locationList = [
+//   "Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh",
+//   "Melaka", "Seremban", "Kuching", "Kota Kinabalu"
+// ];
 
 function renderCars(page) {
   carList.innerHTML = '';
@@ -57,13 +64,15 @@ function renderCars(page) {
     const year = car.year || '2020';
     const image = car.image || 'https://placehold.co/300x180?text=No+Image';
     const msrp = car.msrp || 25000;
-    const price = Math.floor(msrp / 100);
+    const monthlyPrice = Math.floor(msrp / 100);
+    const price = Math.floor(monthlyPrice/30);
     const seats = car.seats || 4;
     const fuel = car.fuel_type || 'Gasoline';
     const transmission = car.transmission || 'Automatic';
-
+    // for random location in Malaysia
+    const assignedLocation = car.location || "Unknown";
     const imageId = `car-img-${car.id}`
-    const carDetailsUrl = `/car-details?trim_id=${car.id}&make=${make}&model=${model}&year=${year}&price=${price}&image=${encodeURIComponent(image)}`;
+    const carDetailsUrl = `/car-details?trim_id=${car.id}&make=${make}&model=${model}&year=${year}&price=${price}&image=${encodeURIComponent(image)}&location=${encodeURIComponent(assignedLocation)}`;
 
     const card = document.createElement('div');
     card.className = 'car-card';
@@ -79,8 +88,11 @@ function renderCars(page) {
         <div class="card-icons">
           <div><i>🔧</i> ${transmission}</div>
         </div>
+        <div class="card-icons">
+          <div><i>📍</i> ${assignedLocation}</div>
+        </div>
         <div class="price-rent">
-          <div class="price">$${price} / month</div>
+          <div class="price">$${price} / day</div>
           <a href="${carDetailsUrl}" class="btn rent-now">
             <button>Rent Now</button>
           </a>
@@ -134,16 +146,14 @@ fetch('http://localhost:5000/api/cars')
     if (!res.ok) throw new Error('Failed to fetch cars');
     return res.json();
   })
-  // .then(async baseCars => {
-  .then(async response => {
-    const baseCars = Array.isArray(response) ? response : response.data;
-
+  .then(async baseCars => {
     const enriched = [];
     const maxCars = 10;
     let index = 0;
 
     while (enriched.length < maxCars && index < baseCars.length) {
       const car = baseCars[index];
+      // const randomLocation = locationList[Math.floor(Math.random() * locationList.length)];
       index++;
 
       try {
@@ -154,7 +164,8 @@ fetch('http://localhost:5000/api/cars')
             msrp: details.msrp,
             seats: details.bodies?.[0]?.seats,
             fuel_type: details.engines?.[0]?.fuel_type,
-            transmission: details.transmissions?.[0]?.description
+            transmission: details.transmissions?.[0]?.description,
+            location: details.location || "Unknown"
           });
           continue;
         }
@@ -173,7 +184,9 @@ fetch('http://localhost:5000/api/cars')
           msrp: details.msrp,
           seats: details.bodies?.[0]?.seats,
           fuel_type: details.engines?.[0]?.fuel_type,
-          transmission: details.transmissions?.[0]?.description
+          transmission: details.transmissions?.[0]?.description,
+          location: details.location || "Unknown"
+
         });
       } catch (err) {
         console.warn(`Trim ${car.id} failed: ${err.message}`);

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/account.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <body>
   <header class="navbar">
@@ -37,9 +38,9 @@
           <li data-target="history-section">
             <i class="fas fa-history"></i> History
           </li>
-          <li data-target="settings-section">
+          <!-- <li data-target="settings-section">
             <i class="fas fa-cog"></i> Settings
-          </li>
+          </li> -->
         </ul>
       </nav>
 
@@ -73,25 +74,50 @@
 
           <!-- Password -->
           <div class="form-row">
-            <label>Reset Password
-              <input type="password" id="currentPassword"  placeholder="Enter current password">
-              <input type="password" id="newPassword"  placeholder="Enter new password">
-            </label>
+            <label>Reset Password</label>
+            <button id="resetPasswordBtn" class="edit-btn">Reset Password</button>
+            <div class="password-wrapper" style="display: none;">
+              <input type="password" id="currentPassword" placeholder="Enter current password">
+              <i class="fa-solid fa-eye toggle-visibility" data-target="currentPassword"></i>
+            </div>
+
+            <div class="password-wrapper" style="display: none;">
+              <input type="password" id="newPassword" placeholder="Enter new password">
+              <i class="fa-solid fa-eye toggle-visibility" data-target="newPassword"></i>
+            </div>
+
+            <div class="password-wrapper" style="display: none;">
+              <input type="password" id="confirmPassword" placeholder="Confirm new password">
+              <i class="fa-solid fa-eye toggle-visibility" data-target="confirmPassword"></i>
+            </div>
+
+            <div class="password-buttons">
+              <button id="saveNewPassword" class="change-pass-btn" style="display: none;">Done</button>
+              <button id="cancelPasswordChange" class="cancel-btn" style="display: none;">Cancel</button>
+            </div>
           </div>
 
           <!-- Save Button -->
           <div class="save-section">
             <button id="saveProfileBtn" class="btn btn-primary">💾 Save changes</button>
+            <button id="logoutBtn" >🚪 Log out</button>
           </div>
         </section>
 
-        <section class="history-section" style="display: none;">
+        <section id="historySection" class="history-section" style="display: none;">
           <h2>Rental History</h2>
-          <p>Coming soon...</p>
+          <div id="historyList" class="history-list"></div>
+          <div id="bookingModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h2>Booking Details</h2>
+            <div id="bookingDetails"></div>
+          </div>
+        </div>
         </section>
 
-        <section class="settings-section"  style="display: none;">
-          <h2>Settings</h2>
+        <!-- <section class="settings-section"  style="display: none;"> -->
+          <!-- <h2>Settings</h2>
 
           <h3>📩 Notification Preferences</h3>
           <label><input type="checkbox" id="emailNotifs" checked> Email Notifications</label><br>
@@ -101,26 +127,42 @@
           <h3>💳 Payment Settings</h3>
           <button id="managePaymentBtn" class="edit-btn">Manage Payment Methods</button>
 
-          <h3>🌐 Regional Settings</h3>
-          <label>
-            Language:
-            <select id="languageSetting">
-              <option value="en">English</option>
-              <option value="ms">Malay</option>
-              <option value="zh">Chinese</option>
-            </select>
-          </label><br>
-          <label>
-            Currency:
-            <select id="currencySetting">
-              <option value="myr">MYR</option>
-              <option value="usd">USD</option>
-            </select>
-          </label>
+          <div id="paymentModal" class="modal" style="display:none;">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <h2>Manage Payment Methods</h2> -->
 
-          <hr>
-          <button id="logoutBtn">🚪 Log out</button>
-        </section>
+              <!-- Saved Methods -->
+              <!-- <h3>Saved Payment Methods</h3>
+              <ul id="savedMethods">
+                <li>
+                  Visa ending in 4242 
+                  <button class="set-default-btn">Set as Default</button>
+                  <button class="remove-btn">Remove</button>
+                </li>
+                <li>
+                  PayPal: eugene@example.com 
+                  <button class="set-default-btn">Set as Default</button>
+                  <button class="remove-btn">Remove</button>
+                </li>
+              </ul>
+
+              <label>
+                <input type="radio" name="card" id="visaCard" value="visa">
+                Visa/Master Card
+              </label>
+              <label>
+                <input type="radio" name="ewallet" id="ewallet" value="ewallet">
+                E-Wallet (PayPal, GrabPay, etc.)
+              </label>
+              <label>
+                <input type="radio" name="bank" id="bank" value="bank">
+                Online Banking
+              </label>
+            </div>
+          </div>
+          <hr> -->
+        <!-- </section> -->
       </div>
     </div>  
   </main>

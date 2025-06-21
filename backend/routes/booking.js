@@ -5,10 +5,10 @@ const Booking = require('../models/Booking');
 // POST /api/bookings — Create a booking
 router.post('/', async (req, res) => {
   try {
-    const { userId, car, startDate, endDate } = req.body;
-
+    const { userId, car, startDate, endDate, pickupLocation, dropoffLocation, pickupTime, dropoffTime } = req.body;
+    
     // Step 1: Validate required fields
-    if (!userId || !car  || !startDate || !endDate) {
+    if (!userId || !car  || !startDate || !endDate || !pickupLocation || !dropoffLocation || !pickupTime || !dropoffTime) {
       return res.status(400).json({ message: 'Missing required booking details.' });
     }
 
@@ -58,7 +58,16 @@ router.post('/', async (req, res) => {
     }
 
 
-    const booking = new Booking({ user: userId, car, startDate, endDate });
+    const booking = new Booking({ 
+      user: userId, 
+      car, 
+      startDate, 
+      endDate, 
+      pickupLocation,
+      dropoffLocation,
+      pickupTime,
+      dropoffTime 
+    });
     await booking.save();
 
     res.status(201).json({ message: 'Booking created', booking });

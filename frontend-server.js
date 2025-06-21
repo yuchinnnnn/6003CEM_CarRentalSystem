@@ -32,5 +32,8 @@ app.get("/car-details", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend/pages", "car-details.html"));
 });
 
+app.get("/payment", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend/pages", "payment.html"));
+});
 
 app.listen(3000, () => console.log("Frontend running at http://localhost:3000"));

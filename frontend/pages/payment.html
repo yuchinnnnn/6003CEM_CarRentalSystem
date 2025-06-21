@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/payment.css" />
+</head>
+
+
+<body>
+  <div class="payment-container">
+    <h2><i class="fa-solid fa-credit-card"></i> Confirm Your Booking</h2>
+
+    <div class="summary-box" id="carSummary">
+      <!-- Booking summary will be inserted here -->
+    </div>
+
+    <form class="payment-form">
+        <p>You will be redirected to your bank's secure page to complete the payment.</p>
+
+        <button type="button" id="payNow">💰 Proceed to Payment</button>
+        <div class="loading" id="loadingMsg" style="display: none;">Processing...</div>
+
+      <!-- <label for="cardNumber">Card Number</label>
+      <input id="cardNumber" type="text" placeholder="1234 5678 9012 3456" required />
+
+      <label for="expiry">Expiry Date</label>
+      <input id="expiry" type="text" placeholder="MM/YY" required />
+
+      <label for="cvv">CVV</label>
+      <input id="cvv" type="password" placeholder="123" required />
+
+      <button type="button" id="payNow">💳 Pay Now</button>
+      <div class="loading" id="loadingMsg" style="display: none;">Processing Payment...</div> -->
+    </form>
+  </div>
+
+  <script src="../js/payment.js"></script>
+</body>
+</html>

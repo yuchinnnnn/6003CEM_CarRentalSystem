@@ -58,10 +58,24 @@
         <div class="booking-form">
           <h3>Book This Car</h3>
           <form id="bookingForm">
+            <label for="pickupLocation">
+              <i class="fa-solid fa-location-dot"></i> 
+              Pickup Location:</label>
+              <span id="pickupLocation">pickup</span>
+            <label for="dropoffLocation">
+              <i class="fa-solid fa-location-arrow"></i> 
+              Dropoff Location:</label>
+              <span id="dropoffLocation">dropoff</span>
             <label><i class="fa-solid fa-calendar-day"></i> Start Date:</label>
             <input type="date" id="startDate" required />
-            <label>End Date:</label>
+            <label><i class="fa-solid fa-calendar-day"></i> End Date:</label>
             <input type="date" id="endDate" required />
+            <label>Pickup Time:</label>
+            <input type="time" id="pickupTime" required />
+            <label>Dropoff Time:</label>
+            <input type="time" id="dropoffTime" required />
+            <label for="specialRequests"><i class="fa-solid fa-comment-dots"></i> Special Requests:</label>
+            <textarea id="specialRequests" placeholder="Any special requests or notes"></textarea>
             <button type="submit">Confirm Booking</button>
           </form>
           <div id="bookingMessage" style="margin-top: 10px; font-weight: bold;"></div>

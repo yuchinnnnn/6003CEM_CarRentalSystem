@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const axios = require('axios');
 const xml2js = require('xml2js');
+const path = require('path');
 
 const NodeCache = require("node-cache");
 const ONE_MONTH = 30 * 24 * 60 * 60; // 30 days in seconds
@@ -17,16 +18,15 @@ const wishlistRoutes = require('../routes/wishlist.js');
 const { modelName } = require('../models/User.js');
 const userRoutes = require('../routes/user');
 const bookingRoutes = require('../routes/booking.js');
-
+const paymentRoutes = require('../routes/payment.js');
 
 // API keys
 const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiYXVkIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiZXhwIjoxNzUwNzg1MDk5LCJpYXQiOjE3NTAxODAyOTksImp0aSI6ImU5NGVkMGZkLTkwMzAtNDJiNC05MTI2LWQ4MzE4ZjMzZTE1YSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.pLEUpLSbDpc4NeeHD2P93q6tXdeGDaJumbu-xB_-a6g';
-const CARSXE_API = '6hzkyx7xq_ueu31sjx3_baqauxwg8';
 const EMAIL_API = '35924de5c3aa0c41819bd0e34bd121ee';
 
 const app = express();
 app.use(cors({
-  origin: '*', // or 'http://localhost:5500' if you want to be strict
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -125,10 +125,17 @@ app.get('/api/car-details', async (req, res) => {
       return res.status(404).json({ error: 'No car data found' });
     }
 
+    const malaysiaLocations = [
+      "Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh",
+      "Melaka", "Seremban", "Kuching", "Kota Kinabalu"
+    ];
+
     const types = [...new Set(carTrims.map(car => car.type))];
     const seats = [...new Set(carTrims.map(car => car.seats))];
-
-    const result = { make, model, year, types, seats };
+    // const location = malaysiaLocations[Math.floor(Math.random() * malaysiaLocations.length)];
+    const location = [...new Set(carTrims.map(car => car.location))];
+    
+    const result = { make, model, year, types, seats, location };
     detailsCache.set(cacheKey, result);
     res.json(result);
   } catch (error) {
@@ -176,6 +183,14 @@ app.get('/api/validate-email', async (req, res) => {
 app.get('/api/trim-details/:trimId', async (req, res) => {
   const { trimId } = req.params;
   const cacheKey = `trim_${trimId}`;
+  const malaysiaLocations = [
+      "Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh",
+      "Melaka", "Seremban", "Kuching", "Kota Kinabalu"
+    ];
+
+const index = parseInt(trimId.replace(/\D/g, '')) % malaysiaLocations.length;
+const location = malaysiaLocations[index]; 
+
   if (detailsCache.has(cacheKey)) return res.json(detailsCache.get(cacheKey));
 
   try {
@@ -184,8 +199,14 @@ app.get('/api/trim-details/:trimId', async (req, res) => {
     });
 
     const data = response.data;
-    detailsCache.set(cacheKey, data);
-    res.json(data);
+    const result = {
+      ...data,
+      location 
+    };
+
+    detailsCache.set(cacheKey, result);
+    res.json(result); // ✅ send the enriched response
+
   } catch (error) {
     const status = error.response?.status;
     const message = error.response?.data?.message || error.message;
@@ -207,12 +228,23 @@ app.get('/api/debug/cache', (req, res) => {
   });
 });
 
+app.get("/payment-success", (req, res) => {
+  res.send("<h2>✅ Payment Successful! Thank you for your booking.</h2>");
+});
+
+app.post("/api/payment-callback", express.urlencoded({ extended: false }), (req, res) => {
+  console.log("📩 ToyyibPay Callback Received:", req.body);
+  res.status(200).send("Callback received");
+});
+
 
 /* Routes */
 app.use('/api/auth', authRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/upload', express.static(path.join(__dirname, '../upload')));
+app.use('/api/payment', paymentRoutes);
 
 /* MongoDB Connection */
 mongoose.connect(process.env.MONGO_URI, {

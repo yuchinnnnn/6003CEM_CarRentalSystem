@@ -7,13 +7,31 @@ const model = decodeURIComponent(params.get("model") || "");
 const year = decodeURIComponent(params.get("year") || "2020");
 const price = decodeURIComponent(params.get("price") || "");
 let imageUrl = decodeURIComponent(params.get("image") || "");
+const carLocation = decodeURIComponent(params.get("location") || "");
+
+const pickupMap = {
+  "Penang": "Penang International Airport",
+  "Kuala Lumpur": "KLIA Terminal 1",
+  "Johor Bahru": "Senai International Airport",
+  "Ipoh": "Sultan Azlan Shah Airport",
+  "Melaka": "Melaka International Airport",
+  "Seremban": "Seremban Central",
+  "Kuching": "Kuching International Airport",
+  "Kota Kinabalu": "Kota Kinabalu International Airport"
+};
+
+const fixedPickupLocation = pickupMap[carLocation] || "Main City Center";
+
+// Display it
+document.getElementById("pickupLocation").textContent = fixedPickupLocation;
+document.getElementById("dropoffLocation").textContent = fixedPickupLocation;
 
 
 // Set basic info immediately
 document.getElementById("carTitle").textContent = `${make} ${model}`;
 document.getElementById("carYear").textContent = `${year}`;
 document.getElementById("carPrice").innerHTML = price
-  ? `<span class=\"price-tag\">$${price}</span> / month`
+  ? `<span class=\"price-tag\">$${price}</span> / day`
   : "<em>Price: N/A</em>";
 
 // Load image (fallback included)
@@ -145,17 +163,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    
     const submitBtn = document.querySelector('#bookingForm button');
     submitBtn.disabled = true;
     submitBtn.textContent = "Processing...";
 
+    const userId = localStorage.getItem("userId"); // Get userId from storage
+    const startDate = new Date(document.getElementById("startDate").value);
+    const endDate = new Date(document.getElementById("endDate").value);
+    const pickupLocation = fixedPickupLocation;
+    const dropoffLocation = fixedPickupLocation;
+    const pickupTime = document.getElementById("pickupTime").value;
+    const dropoffTime = document.getElementById("dropoffTime").value;
 
-    const startDate = new Date(startInput.value);
-    const endDate = new Date(endInput.value);
+    const bookingMessage = document.getElementById("bookingMessage");
 
     if (!userId) {
       bookingMessage.textContent = "⚠ You must be logged in to book.";
       bookingMessage.style.color = "orange";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Confirm Booking";
       return;
     }
 
@@ -167,57 +194,53 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Validate pickup/dropoff
+    if (!pickupTime || !dropoffTime) {
+      bookingMessage.textContent = "❌ Please fill in all pickup/drop-off info.";
+      bookingMessage.style.color = "salmon";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Confirm Booking";
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+   
+    const price = parseInt(params.get("price")) || 0; // 👈 convert to number
+
     const car = {
       id: params.get("trim_id"),
       make,
       model,
       year,
       imageUrl,
-      price
+      price // now a number
     };
 
-    const booking = { userId, car, startDate, endDate };
 
-    try {
-      const res = await fetch("http://localhost:5000/api/bookings", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(booking)
-      });
+    const diff = endDate - startDate;
+    const durationDays = Math.ceil(diff / (1000 * 3600 * 24)); // convert ms to days
 
-      const result = await res.json();
-      if (res.ok) {
-        bookingMessage.textContent = "✅ Booking successful!";
-        bookingMessage.style.color = "lightgreen";
+    // Calculate total price
+    const totalPrice = price * durationDays;
 
-        // Show post-booking options
-        document.getElementById("postBookingOptions").style.display = "block";
+    const booking = {
+      userId,
+      car,
+      startDate,
+      endDate,
+      pickupLocation,
+      dropoffLocation,
+      pickupTime,
+      dropoffTime,
+      durationDays,
+      totalPrice
+    };
 
-        // Hide form to avoid double booking
-        document.getElementById("bookingForm").style.display = "none";
-
-        // Option buttons
-        document.getElementById("bookAnotherBtn").addEventListener("click", () => {
-          window.location.href = "/carlist";
-        });
-
-        document.getElementById("viewBookingsBtn").addEventListener("click", () => {
-          window.location.href = "/account"; 
-        });
-      } else {
-        bookingMessage.textContent = "❌ Booking failed: " + result.message;
-        bookingMessage.style.color = "salmon";
-      }
-    } catch (err) {
-      bookingMessage.textContent = "❌ Network error. Try again later.";
-      bookingMessage.style.color = "salmon";
-    }
-
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Confirm Booking";
+    // Save to localStorage and redirect to payment
+    localStorage.setItem("pendingBooking", JSON.stringify(booking));
+    window.location.href = "/payment"; // navigate to payment page
+   });
   });
-});
-
 
 const wishlistBtn = document.getElementById("wishlistBtn");
 
