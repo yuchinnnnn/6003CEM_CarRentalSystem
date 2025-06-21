@@ -27,7 +27,7 @@ const EMAIL_API = '35924de5c3aa0c41819bd0e34bd121ee';
 const app = express();
 app.use(cors({
   origin: '*', // or 'http://localhost:5500' if you want to be strict
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
