@@ -267,19 +267,22 @@ document.addEventListener("DOMContentLoaded", async() => {
   function viewBookingDetails(bookingId) {
     const booking = bookings.find(b => b._id === bookingId);
     if (!booking) return alert("Booking not found.");
-    const rentalDuration = Math.ceil((new Date(booking.endDate) - new Date(booking.startDate)) / (1000 * 60 * 60 * 24));
+    const rentalDuration = Math.ceil((new Date(booking.endDate) - new Date(booking.startDate)) / (1000 * 60 * 60 * 24)) + 1;
 
     const details = `
       <p><strong>Booking ID:</strong> ${booking._id}</p>
       <p><strong>Rental Period:</strong> ${new Date(booking.startDate).toLocaleDateString()} → ${new Date(booking.endDate).toLocaleDateString()}</p>
       <p><strong>Rental Duration:</strong> ${rentalDuration} days</p>
-      <p><strong>Pickup Location:</strong> ${booking.pickupLocation}</p>
-      <p><strong>Dropoff Location:</strong> ${booking.dropoffLocation}</p>
-      <p><strong>Pickup Time:</strong> ${new Date(booking.pickupTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-      <p><strong>Dropoff Time:</strong> ${new Date(booking.dropoffTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+      <p><strong>Pickup Location:</strong> ${booking.car.pickupLocation}</p>
+      <p><strong>Dropoff Location:</strong> ${booking.car.dropoffLocation}</p>
+      <p><strong>Pickup Time:</strong> ${new Date(booking.car.pickupTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+      <p><strong>Dropoff Time:</strong> ${new Date(booking.car.dropoffTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
       <p><strong>Car:</strong> ${booking.car.make} ${booking.car.model} (${booking.car.year})</p>
       <p><strong>Car Type:</strong> ${booking.car.type}</p>
       <p><strong>Price:</strong> RM ${booking.car.price}</p>
+      <p><strong>Total Price:</strong> RM ${booking.totalPrice}</p>
+      <p><strong>Status:</strong> ${booking.status}</p>
+      <p><strong>Created At:</strong> ${new Date(booking.createdAt).toLocaleDateString()}</p>
       <img src="${booking.car.imageUrl}" alt="Car" style="width: 100%; margin-top: 1rem; border-radius: 10px;">
     `;
 
@@ -325,7 +328,7 @@ document.addEventListener("DOMContentLoaded", async() => {
           <div class="history-details">
             <h3>${booking.car.make} ${booking.car.model} (${booking.car.year})</h3>
             <p><strong>Rental Dates:</strong> ${start} → ${end}</p>
-            <p><strong>Total Price:</strong> RM ${booking.car.price}</p>
+            <p><strong>Total Price:</strong> RM ${booking.totalPrice}</p>
             <button onclick="viewBookingDetails('${booking._id}')">View Details</button>
           </div>
         `;

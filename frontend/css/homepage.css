@@ -1,0 +1,157 @@
+* {
+  text-decoration: none;
+}
+
+body{
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeIn 1s ease-in-out;
+  background-color: black;
+  background-attachment: fixed;
+  margin: 0;
+  padding: 20px;
+}
+
+header {
+  width: 100%;
+  background-color: transparent;
+  animation: fadeIn 1s ease-in-out;
+}
+
+
+.layout {
+  display: flex;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.text {
+  margin: 50px 50px 20px 100px;
+  letter-spacing: 1px;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+.text h1 {
+  font-weight: bold;
+  font-size: 4rem;
+  font-family: sans-serif;
+  margin-top: 60px;
+  margin-bottom: 10px;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+.text a{
+    color: black;
+}
+
+.btn{
+  color: white;
+  border: 2px solid;
+  position: relative;
+  top: 3rem;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border-radius: 6px;
+  transition: all 0.5s ease;
+  margin-right: 10px;
+  animation: fadeInUp 1s ease-in-out 0.5s backwards;
+}
+
+.text .btn:hover {
+  background-color: rgb(255,140,0);
+  box-shadow: 0px 10px 2px rgba(255,140,0);
+}
+
+.text p{
+  width: 80%;
+  animation: fadeInUp 1s ease-in-out 1s backwards;
+}
+
+.cars {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  width: 90%;
+  padding: 20px;
+  animation: slideInFromBottom 1s ease-in-out 1.5s backwards;
+}
+
+.cars img {
+  width: 100px;
+  height: 100px;
+  margin-left: 20px;
+  object-fit: cover;
+  border: 2px solid white;
+  transition: transform 0.5s ease;
+  animation: fadeInUp 1s ease-in-out 1.5s backwards;
+}
+
+.cars img:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 10px 20px rgba(255,140,0,0.5);
+}
+
+.car-toggle img {
+  position: absolute;
+  right: 47px;
+  top: 7rem;
+  width: 50%;
+  height: 74%;
+  filter: drop-shadow(63px 90px 392px white);
+  animation: fadeInUp 1s ease-in-out 1s backwards;
+}
+
+.cars,
+.car-toggle {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotateIn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

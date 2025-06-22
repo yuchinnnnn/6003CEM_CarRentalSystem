@@ -7,8 +7,8 @@ import CarListPage from "./components/CarListPage";
 import AboutPage from "./components/AboutPage";
 import LoginPage from "./components/LoginPage";
 import WishlistPage from "./components/Wishlist";
-import CarDetails from "./components/CarDetails";
-import PaymentPage from "./components/PaymentPage";     
+import CarDetailsPage from "./components/CarDetailsPage";
+import PaymentPage from "./components/PaymentPage";
 
 function App() {
   return (
@@ -20,7 +20,7 @@ function App() {
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/account" element={<AccountPage />} />
-        <Route path="/car-details" element={<CarDetails />} /> 
+        <Route path="/car-details" element={<CarDetailsPage />} /> 
         <Route path="/payment" element={<PaymentPage />} />
       </Routes>
     </Router>

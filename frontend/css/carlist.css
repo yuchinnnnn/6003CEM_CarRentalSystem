@@ -1,0 +1,389 @@
+* {
+  transition: all 0.3s ease;
+}
+
+body{
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeIn 1s ease-in-out;
+  background-color: black;
+  background-attachment: fixed;
+  margin: 0;
+  padding: 20px;
+}
+
+header {
+  width: 100%;
+  background-color: transparent;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Highlight active link */
+.center-nav a:nth-child(2) {
+  color: orange;
+}
+
+
+.nav{
+    position: fixed;
+    top: 20px;
+    left: 50px;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+}
+
+.nav-text a{
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    transition: var(--transition-3s);
+}
+
+.nav-text i{
+    font-size: 20px;
+    margin-right: 10px;
+    color: white;
+}
+
+.car-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+/* Layout container for sidebar + main content */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Sidebar styling */
+
+.sidebar {
+  position: fixed;
+  top: 100px;
+  left: 30px;
+  width: 300px;
+  background: #1f1f1f;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #2b2b2b;
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+  z-index: 999;
+  animation: fadeIn 0.4s ease-in-out;
+  color: #fff;
+}
+
+.sidebar {
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.sidebar h2 {
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: rgb(255,140,0);
+  font-weight: bold;
+}
+
+
+.sidebar.hidden {
+  transform: translateX(-110%);
+  position: absolute;
+}
+
+.filter-group {
+  margin-bottom: 24px;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #bbb;
+}
+
+.filter-group select,
+.price-inputs input,
+.date-inputs input {
+  width: 100%;
+  background: #2c2c2c;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.filter-group select:focus,
+.price-inputs input:focus,
+.date-inputs input:focus {
+  border-color: rgb(255,140,0);
+}
+
+.price-inputs,
+.date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+.price-inputs span,
+.date-inputs span {
+  color: #999;
+  font-size: 14px;
+}
+
+
+.apply-button {
+  width: 100%;
+  padding: 12px;
+  background-color: rgb(255,140,0);
+  color: #000;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 8px;
+}
+
+.apply-button:hover {
+  background-color: rgb(200, 90, 0);
+}
+
+
+
+/* Main content area */
+.main-content {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* margin-left: -1080px; */
+  margin-top: 30px;
+}
+
+.main-content h1 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 2rem;
+  color: white;
+}
+
+/* Search container */
+.search-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#searchInput {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+#searchButton {
+  padding: 10px 20px;
+  background-color: rgb(255,140,0);;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+#searchButton:hover {
+  background-color: rgb(144, 84, 12);
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .sidebar {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .search-container {
+    flex-direction: column;
+  }
+
+  #searchButton {
+    width: 100%;
+  }
+}
+
+
+.car-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(173, 173, 173, 0.05);
+  overflow: hidden;
+  width: 300px;
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+}
+
+.car-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+}
+
+
+.card-content h3 {
+  color: rgb(255,140,0);
+  margin-left: 30px;
+}
+
+.card-content .year-badge {
+  background: rgba(255,140,0, 0.2);
+  border: 1px solid orange;
+  color: orange;
+  font-weight: 600;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.card-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  color: #555;
+  font-size: 14px;
+  min-height: 40px;
+}
+
+.card-icons > div {
+  flex: 1 1 45%;
+  background-color: #f9f9f9;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-icons i {
+  margin-right: 4px;
+}
+
+.price-rent {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+
+.price {
+  font-size: 20px;
+  color: #222;
+  font-weight: bold;
+}
+
+button {
+  background: #1b74d6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #135ab0;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  color: rgb(255,140,0);
+  font-size: 24px;
+  font-weight: bold;
+  float: right;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #fff;
+}
+
+.hidden {
+  display: none;
+}
+
+
+.filter-toggle-container {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.open-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.open-button:hover {
+  background-color: #0056b3;
+}
+
+.pagination-controls {
+  text-align: center;
+  margin-top: 20px;
+}
+.pagination-controls button {
+  margin: 0 5px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.pagination-controls .active {
+  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+}
+

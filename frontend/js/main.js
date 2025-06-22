@@ -7,6 +7,10 @@ let currentPage = 1;
 
 const trimDetailsCache = new Map();
 
+const sidebar = document.getElementById('filterSidebar');
+const mainContent = document.querySelector('.main-content');
+const openBtn = document.getElementById('openFilterBtn');
+const closeBtn = document.getElementById('closeFilterBtn');
 
 document.getElementById('searchButton').addEventListener('click', () => {
   const query = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -15,11 +19,14 @@ document.getElementById('searchButton').addEventListener('click', () => {
   });
 });
 
-document.getElementById('closeFilterBtn').addEventListener('click', () => {
-  document.getElementById('filterSidebar').classList.add('hidden');
+openBtn.addEventListener('click', () => {
+  sidebar.classList.remove('hidden');
+  mainContent.classList.add('sidebar-visible');
 });
-document.getElementById('openFilterBtn').addEventListener('click', () => {
-  document.getElementById('filterSidebar').classList.remove('hidden');
+
+closeBtn.addEventListener('click', () => {
+  sidebar.classList.add('hidden');
+  mainContent.classList.remove('sidebar-visible');
 });
 
 filterBtn.addEventListener('click', () => {
@@ -27,30 +34,48 @@ filterBtn.addEventListener('click', () => {
   renderCars(1);
   renderPagination();
   document.getElementById('filterSidebar').classList.add('hidden');
+  mainContent.classList.remove('sidebar-visible');
 });
 
 function applyFilters() {
-  const type = document.getElementById('carType').value;
-  const brand = document.getElementById('carBrand').value;
+  const type = document.getElementById('carType').value.trim().toLowerCase();
+  const brand = document.getElementById('carBrand').value.trim().toLowerCase();
+  const seats = document.getElementById('carSeats').value;
   const location = document.getElementById('locationFilter').value;
   const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
   const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
 
   filteredCars = allCars.filter(car => {
-    const make = car.make || 'Unknown';
+    const make = (car.make || '').toLowerCase();
     const msrp = car.msrp || 20000;
-    const carTypeMatch = !type || (car.body_type || '').toLowerCase() === type.toLowerCase();
-    const brandMatch = !brand || make.toLowerCase() === brand.toLowerCase();
-    const priceMatch = msrp / 100 >= minPrice && msrp / 100 <= maxPrice;
+    const carType = (car.body_type || car.type || '').toLowerCase();
+    const carSeats = parseInt(car.seats) || 0;
     const locationMatch = !location || (car.location && car.location == location);
-    return carTypeMatch && brandMatch && priceMatch && locationMatch;
+    
+    if (type && car.type !== type) return false;
+
+    const carTypeMatch = !type || carType === type;
+    const brandMatch = !brand || make === brand;
+    const priceMatch = msrp / 100 >= minPrice && msrp / 100 <= maxPrice;
+    const seatMatch = !seats || parseInt(seats) === carSeats;
+
+    console.log("Filtering by:");
+    console.log("Type:", type);
+    console.log("Brand:", brand);
+    console.log("Seats:", seats);
+    console.log("Filtered Cars Count:", filteredCars.length);
+
+    const noResultsMsg = document.querySelector('.no-results');
+    if (filteredCars.length === 0) {
+      noResultsMsg.classList.remove('hidden');
+    } else {
+      noResultsMsg.classList.add('hidden');
+    }
+
+
+    return carTypeMatch && brandMatch && priceMatch && locationMatch && seatMatch;
   });
 }
-
-// const locationList = [
-//   "Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh",
-//   "Melaka", "Seremban", "Kuching", "Kota Kinabalu"
-// ];
 
 function renderCars(page) {
   carList.innerHTML = '';
@@ -77,7 +102,7 @@ function renderCars(page) {
     const card = document.createElement('div');
     card.className = 'car-card';
     card.innerHTML = `
-      <img id="${imageId}" src="${image}" alt="${make} ${model}">
+      <img id="${imageId}" src="${image}" alt="${make} ${model}" onerror="this.src='/images/placeholder.jpg'">
       <div class="card-content">
         <h3>${make} ${model}</h3>
         <span class="year-badge">${year}</span>
@@ -146,9 +171,11 @@ fetch('http://localhost:5000/api/cars')
     if (!res.ok) throw new Error('Failed to fetch cars');
     return res.json();
   })
-  .then(async baseCars => {
+  .then(async response => {
+    const baseCars = Array.isArray(response) ? response : response.data;
+
     const enriched = [];
-    const maxCars = 10;
+    const maxCars = 15; // Limit to 20 cars for performance
     let index = 0;
 
     while (enriched.length < maxCars && index < baseCars.length) {
@@ -165,7 +192,8 @@ fetch('http://localhost:5000/api/cars')
             seats: details.bodies?.[0]?.seats,
             fuel_type: details.engines?.[0]?.fuel_type,
             transmission: details.transmissions?.[0]?.description,
-            location: details.location || "Unknown"
+            location: details.location || "Unknown",
+            type: details.bodies?.[0]?.type || "Unknown"
           });
           continue;
         }
@@ -185,8 +213,8 @@ fetch('http://localhost:5000/api/cars')
           seats: details.bodies?.[0]?.seats,
           fuel_type: details.engines?.[0]?.fuel_type,
           transmission: details.transmissions?.[0]?.description,
-          location: details.location || "Unknown"
-
+          location: details.location || "Unknown",
+          type: details.bodies?.[0]?.type || "Unknown"
         });
       } catch (err) {
         console.warn(`Trim ${car.id} failed: ${err.message}`);
