@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const axios = require('axios');
 const xml2js = require('xml2js');
 const path = require('path');
@@ -21,13 +20,13 @@ const bookingRoutes = require('../routes/booking.js');
 const paymentRoutes = require('../routes/payment.js');
 
 // API keys
-const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiYXVkIjoiZmM1OTkxODUtYmM3NS00NzhhLWI2YjAtN2I5MGE5YmQ0YWY2IiwiZXhwIjoxNzUwNzg1MDk5LCJpYXQiOjE3NTAxODAyOTksImp0aSI6ImU5NGVkMGZkLTkwMzAtNDJiNC05MTI2LWQ4MzE4ZjMzZTE1YSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.pLEUpLSbDpc4NeeHD2P93q6tXdeGDaJumbu-xB_-a6g';
+const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzUxMTM3OTc1LCJpYXQiOjE3NTA1MzMxNzUsImp0aSI6ImZlODA3OGM0LTVlODctNDQ1Ni04N2Q1LTEzNTU5NzA5ZTE3ZCIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.UFzJAGwTJUPW0OotcMsLdHFJPzwAZZb1bmulJbWEQrM';
 const EMAIL_API = '35924de5c3aa0c41819bd0e34bd121ee';
 
 const app = express();
 app.use(cors({
   origin: '*', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
@@ -79,7 +78,7 @@ app.get('/api/cars', async (req, res) => {
 
 });
 
-/* Fetch image from CarImagery */
+// * Fetch car image from CarImagery Version 1 */
 app.get('/api/car-image', async (req, res) => {
   const { make, model, year } = req.query;
   if (!make || !model || !year) {
@@ -99,8 +98,9 @@ app.get('/api/car-image', async (req, res) => {
   }
 });
 
+
 /* Basic car detail fetch by make/model/year */
-app.get('/api/car-details', async (req, res) => {
+app.get('/api/car-details-all', async (req, res) => {
   const { make, model, year = 2020 } = req.query;
   const cacheKey = `details_${make}_${model}_${year}`;
   if (detailsCache.has(cacheKey)) {
@@ -125,14 +125,8 @@ app.get('/api/car-details', async (req, res) => {
       return res.status(404).json({ error: 'No car data found' });
     }
 
-    const malaysiaLocations = [
-      "Kuala Lumpur", "Penang", "Johor Bahru", "Ipoh",
-      "Melaka", "Seremban", "Kuching", "Kota Kinabalu"
-    ];
-
     const types = [...new Set(carTrims.map(car => car.type))];
     const seats = [...new Set(carTrims.map(car => car.seats))];
-    // const location = malaysiaLocations[Math.floor(Math.random() * malaysiaLocations.length)];
     const location = [...new Set(carTrims.map(car => car.location))];
     
     const result = { make, model, year, types, seats, location };
@@ -205,7 +199,7 @@ const location = malaysiaLocations[index];
     };
 
     detailsCache.set(cacheKey, result);
-    res.json(result); // ✅ send the enriched response
+    res.json(result); 
 
   } catch (error) {
     const status = error.response?.status;
@@ -252,9 +246,6 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true
 }).then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
-
-app.use('/api/auth', authRoutes);
-app.use('/api/wishlist', wishlistRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

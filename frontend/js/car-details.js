@@ -128,13 +128,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const bookingMessage = document.getElementById("bookingMessage");
   const wishlistBtn = document.getElementById("wishlistBtn");
   const userId = localStorage.getItem('userId');
+  const totalPriceDisplay = document.getElementById("totalPriceDisplay");
 
   startInput.min = today;
   endInput.min = today;
-
+  
   startInput.addEventListener("change", () => {
     endInput.min = startInput.value;
   });
+
+  function updateTotalPriceDisplay() {
+    const startDateVal = startInput.value;
+    const endDateVal = endInput.value;
+
+    if (startDateVal && endDateVal) {
+      const start = new Date(startDateVal);
+      const end = new Date(endDateVal);
+
+      if (end >= start) {
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        const total = days * parseInt(price || 0);
+        const dayLabel = days === 1 ? "1 day" : `${days} days`;
+
+        totalPriceDisplay.textContent = `Duration: ${dayLabel} — Total Price: $${total}`;
+        return;
+      }
+    }
+
+    totalPriceDisplay.textContent = ""; // Clear if invalid
+  }
+
+  startInput.addEventListener("change", updateTotalPriceDisplay);
+  endInput.addEventListener("change", updateTotalPriceDisplay);
+
 
   if (userId) {
     fetch(`http://localhost:5000/api/wishlist`, {
@@ -170,13 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const userId = localStorage.getItem("userId"); // Get userId from storage
     const startDate = new Date(document.getElementById("startDate").value);
-    const endDate = new Date(document.getElementById("endDate").value);
+    const endDate = new Date(document.getElementById("endDate").value );
     const pickupLocation = fixedPickupLocation;
     const dropoffLocation = fixedPickupLocation;
     const pickupTime = document.getElementById("pickupTime").value;
     const dropoffTime = document.getElementById("dropoffTime").value;
-
-    const bookingMessage = document.getElementById("bookingMessage");
 
     if (!userId) {
       bookingMessage.textContent = "⚠ You must be logged in to book.";
@@ -203,6 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    if(startDate < new Date(today) || endDate < new Date(today)) {
+      bookingMessage.textContent = "❌ Dates cannot be in the past.";
+      bookingMessage.style.color = "salmon";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Confirm Booking";
+      return;
+    }
+
     const params = new URLSearchParams(window.location.search);
    
     const price = parseInt(params.get("price")) || 0; // 👈 convert to number
@@ -213,12 +245,16 @@ document.addEventListener('DOMContentLoaded', () => {
       model,
       year,
       imageUrl,
-      price // now a number
+      price, // now a number
+      pickupLocation,
+      dropoffLocation,
+      pickupTime,
+      dropoffTime
     };
 
 
     const diff = endDate - startDate;
-    const durationDays = Math.ceil(diff / (1000 * 3600 * 24)); // convert ms to days
+    const durationDays = Math.ceil(diff / (1000 * 3600 * 24)) + 1; // convert ms to days
 
     // Calculate total price
     const totalPrice = price * durationDays;
@@ -228,17 +264,49 @@ document.addEventListener('DOMContentLoaded', () => {
       car,
       startDate,
       endDate,
-      pickupLocation,
-      dropoffLocation,
-      pickupTime,
-      dropoffTime,
       durationDays,
       totalPrice
     };
 
-    // Save to localStorage and redirect to payment
-    localStorage.setItem("pendingBooking", JSON.stringify(booking));
-    window.location.href = "/payment"; // navigate to payment page
+      try {
+        const response = await fetch("http://localhost:5000/api/bookings", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token")
+          },
+          body: JSON.stringify({
+            ...booking,
+            status: "pending"  // 👈 Set it as pending
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          bookingMessage.textContent = "✅ Booking saved. Redirecting to payment...";
+          bookingMessage.style.color = "green";
+
+          localStorage.setItem("pendingBooking", JSON.stringify(result.booking));
+
+          setTimeout(() => {
+            window.location.href = "/payment";
+          }, 1500); // wait 1.5 seconds before redirect
+        } else {
+          bookingMessage.textContent = `❌ Booking failed: ${result.message}`;
+          bookingMessage.style.color = "salmon";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Confirm Booking";
+          return;
+        }
+      } catch (err) {
+        console.error("Booking error:", err);
+        bookingMessage.textContent = "❌ Booking request failed.";
+        bookingMessage.style.color = "salmon";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Confirm Booking";
+        return;
+      }
    });
   });
 

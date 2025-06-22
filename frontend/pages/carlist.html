@@ -39,8 +39,26 @@
         <label for="carType">Car Type</label>
         <select id="carType">
           <option value="">All</option>
-          <option value="SUV">SUV</option>
           <option value="Sedan">Sedan</option>
+          <option value="SUV">SUV</option>
+          <option value="Coupe">Coupe</option>
+          <option value="Convertible">Convertible</option>
+          <option value="Wagon">Wagon</option>
+          <option value="Hatchback">Hatchback</option>
+          <option value="Truck (Extended Cab)">Truck (Extended Cab)</option>
+          <option value="Truck (Crew Cab)">Truck (Crew Cab)</option>
+          <option value="Van">Van</option>
+          <option value="Ext Van">Ext Van</option>
+          <option value="Truck (Regular Cab)">Truck (Regular Cab)</option>
+          <option value="Truck (Double Cab)">Truck (Double Cab)</option>
+          <option value="Minivan">Minivan</option>
+          <option value="Truck (SuperCab)">Truck (SuperCab)</option>
+          <option value="Truck (SuperCrew)">Truck (SuperCrew)</option>
+          <option value="Truck (King Cab)">Truck (King Cab)</option>
+          <option value="Truck (Quad Cab)">Truck (Quad Cab)</option>
+          <option value="Truck (Mega Cab)">Truck (Mega Cab)</option>
+          <option value="Truck (Access Cab)">Truck (Access Cab)</option>
+          <option value="Truck (CrewMax)">Truck (CrewMax)</option>
         </select>
       </div>
 
@@ -66,10 +84,50 @@
         <label for="carBrand">Car Brand</label>
         <select id="carBrand">
           <option value="">All</option>
-          <option value="Toyota">Toyota</option>
-          <option value="Honda">Honda</option>
-          <option value="Ford">Ford</option>
+          <option value="Acura">Acura</option>
+          <option value="Alfa Romeo">Alfa Romeo</option>
+          <option value="Aston Martin">Aston Martin</option>
+          <option value="Audi">Audi</option>
+          <option value="Bentley">Bentley</option>
           <option value="BMW">BMW</option>
+          <option value="Buick">Buick</option>
+          <option value="Cadillac">Cadillac</option>
+          <option value="Chevrolet">Chevrolet</option>
+          <option value="Chrysler">Chrysler</option>
+          <option value="Dodge">Dodge</option>
+          <option value="FIAT">FIAT</option>
+          <option value="Ford">Ford</option>
+          <option value="Genesis">Genesis</option>
+          <option value="GMC">GMC</option>
+          <option value="Honda">Honda</option>
+          <option value="Hyundai">Hyundai</option>
+          <option value="INFINITI">INFINITI</option>
+          <option value="Jaguar">Jaguar</option>
+          <option value="Jeep">Jeep</option>
+          <option value="Kia">Kia</option>
+          <option value="Lamborghini">Lamborghini</option>
+          <option value="Land Rover">Land Rover</option>
+          <option value="Lexus">Lexus</option>
+          <option value="Lincoln">Lincoln</option>
+          <option value="Lotus">Lotus</option>
+          <option value="Maserati">Maserati</option>
+          <option value="Mazda">Mazda</option>
+          <option value="McLaren">McLaren</option>
+          <option value="Mercedes-Benz">Mercedes-Benz</option>
+          <option value="MINI">MINI</option>
+          <option value="Mitsubishi">Mitsubishi</option>
+          <option value="Nissan">Nissan</option>
+          <option value="Polestar">Polestar</option>
+          <option value="Porsche">Porsche</option>
+          <option value="Ram">Ram</option>
+          <option value="Rolls-Royce">Rolls-Royce</option>
+          <option value="Subaru">Subaru</option>
+          <option value="Tesla">Tesla</option>
+          <option value="Toyota">Toyota</option>
+          <option value="Volkswagen">Volkswagen</option>
+          <option value="Volvo">Volvo</option>
+          <option value="Ferrari">Ferrari</option>
+          <option value="Bugatti">Bugatti</option>
         </select>
       </div>
 
@@ -78,9 +136,15 @@
         <select id="carSeats">
           <option value="">Any</option>
           <option value="2">2</option>
+          <option value="3">3</option>
           <option value="4">4</option>
           <option value="5">5</option>
+          <option value="6">6</option>
           <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="10">10</option>
+          <option value="12">12</option>
+          <option value="15">15</option>
         </select>
       </div>
 
@@ -115,6 +179,7 @@
       </div>
 
       <div class="car-list" id="carList"></div>
+      <p class="no-results hidden"> No cars found matching the filter criteria.</p>
       <div id="paginationControls" class="pagination-controls"></div>
     </main>
   </div>

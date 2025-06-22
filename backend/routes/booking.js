@@ -5,14 +5,19 @@ const Booking = require('../models/Booking');
 // POST /api/bookings — Create a booking
 router.post('/', async (req, res) => {
   try {
-    const { userId, car, startDate, endDate, pickupLocation, dropoffLocation, pickupTime, dropoffTime } = req.body;
-    
-    // Step 1: Validate required fields
-    if (!userId || !car  || !startDate || !endDate || !pickupLocation || !dropoffLocation || !pickupTime || !dropoffTime) {
+    const { userId, car, startDate, endDate, totalPrice } = req.body;
+
+    if (!userId || !car || !startDate || !endDate) {
       return res.status(400).json({ message: 'Missing required booking details.' });
     }
 
-    // Step 2: Validate date logic
+    const { pickupLocation, dropoffLocation, pickupTime, dropoffTime } = car;
+
+    if (!pickupLocation || !dropoffLocation || !pickupTime || !dropoffTime) {
+      return res.status(400).json({ message: 'Missing pickup/drop-off details.' });
+    }
+    
+
     const now = new Date();
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -57,16 +62,13 @@ router.post('/', async (req, res) => {
       return res.status(409).json({ message: 'This car is already booked for the selected period.' });
     }
 
-
     const booking = new Booking({ 
       user: userId, 
       car, 
       startDate, 
-      endDate, 
-      pickupLocation,
-      dropoffLocation,
-      pickupTime,
-      dropoffTime 
+      endDate,
+      totalPrice,
+      status: req.body.status || "pending"
     });
     await booking.save();
 
@@ -77,7 +79,29 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET /api/bookings/:userId — Get bookings by user 
+
+// PATCH /api/bookings/:bookingId — Update booking status
+router.patch('/:id', async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!status) return res.status(400).json({ message: "Missing status" });
+
+    const booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
+
+    res.json({ message: "Booking updated", booking });
+  } catch (err) {
+    console.error("Booking update error:", err);
+    res.status(500).json({ message: "Failed to update booking" });
+  }
+});
+
+// GET /api/bookings/:userId — Get bookings by user
 router.get('/:userId', async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.params.userId }).sort({ createdAt: -1 });

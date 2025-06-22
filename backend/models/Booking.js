@@ -17,8 +17,8 @@ const bookingSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
+  totalPrice: { type: Number, required: true },
   status: { type: String, default: 'pending' } // pending, confirmed, cancelled
-
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);
