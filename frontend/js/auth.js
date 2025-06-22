@@ -111,6 +111,14 @@ registerForm.addEventListener("submit", async (e) => {
   const formData = new FormData(registerForm);
   const data = Object.fromEntries(formData.entries());
 
+  const password = data.password;
+  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+  if (!passwordPattern.test(password)) {
+    alert("❌ Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.");
+    return;
+  }
+
   // Step 1: Validate email via your backend (MailboxLayer)
   try {
     const emailCheckRes = await fetch(`http://localhost:5000/api/validate-email?email=${encodeURIComponent(data.email)}`);
