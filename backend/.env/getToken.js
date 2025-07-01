@@ -16,7 +16,7 @@ async function getToken() {
       }
     });
 
-    const data = response.data;  // ✅ axios response data is already parsed JSON or text
+    const data = response.data;
     console.log('Full response data:', data);
     return response.data.token;
 

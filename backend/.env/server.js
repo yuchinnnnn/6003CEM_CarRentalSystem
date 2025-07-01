@@ -20,7 +20,7 @@ const bookingRoutes = require('../routes/booking.js');
 const paymentRoutes = require('../routes/payment.js');
 
 // API keys
-const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiYXVkIjoiNDU4NzQ1YmEtNDQ0My00OTE2LTllM2QtOTFkMDMxZTIxYjEwIiwiZXhwIjoxNzUxMTM3OTc1LCJpYXQiOjE3NTA1MzMxNzUsImp0aSI6ImZlODA3OGM0LTVlODctNDQ1Ni04N2Q1LTEzNTU5NzA5ZTE3ZCIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.UFzJAGwTJUPW0OotcMsLdHFJPzwAZZb1bmulJbWEQrM';
+const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiYmVlMzdmYmQtZjI5Zi00ZjJkLTlkODAtMTc5MWNhMzZkZmUyIiwiYXVkIjoiYmVlMzdmYmQtZjI5Zi00ZjJkLTlkODAtMTc5MWNhMzZkZmUyIiwiZXhwIjoxNzUxOTU1NDY2LCJpYXQiOjE3NTEzNTA2NjYsImp0aSI6IjAwZWQxNDBjLTJmNmYtNGRmYi04YTVhLTU4ODFkNDYzMWI3ZSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6W10sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.nVg9LUL1ofKphUE6u3GWW2Uk15zpsD1v0BPm2fFz36c';
 const EMAIL_API = '35924de5c3aa0c41819bd0e34bd121ee';
 
 const app = express();
@@ -40,11 +40,11 @@ app.get('/api/cars', async (req, res) => {
     const cacheKey = `cars_${year}`;
     const cached = carCache.get(cacheKey);
     if (cached) {
-      console.log('✅ Using cached data');
+      console.log(' Using cached data');
       return res.json({ fromCache: true, data: cached });
     }
 
-    console.log('🔄 Fetching fresh data from API');
+    console.log(' Fetching fresh data from API');
 
     const totalPages = 5;
     const allModels = [];
@@ -64,13 +64,13 @@ app.get('/api/cars', async (req, res) => {
     res.json(allModels); // Send the combined array
   } catch (error) {
     if (error.response) {
-      console.error('🔴 API Response Error:');
+      console.error(' API Response Error:');
       console.error('Status:', error.response.status);
       console.error('Data:', error.response.data);
     } else if (error.request) {
-      console.error('🔴 No response received:', error.request);
+      console.error(' No response received:', error.request);
     } else {
-      console.error('🔴 Error setting up request:', error.message);
+      console.error(' Error setting up request:', error.message);
     }
 
     res.status(500).json({ error: 'Failed to fetch car data' });
@@ -104,10 +104,10 @@ app.get('/api/car-details-all', async (req, res) => {
   const { make, model, year = 2020 } = req.query;
   const cacheKey = `details_${make}_${model}_${year}`;
   if (detailsCache.has(cacheKey)) {
-    console.log(`✅ Cache hit for ${cacheKey}`);
+    console.log(` Cache hit for ${cacheKey}`);
     return res.json(detailsCache.get(cacheKey));
   } else {
-    console.log(`❌ Cache miss for ${cacheKey}`);
+    console.log(` Cache miss for ${cacheKey}`);
   }
 
   if (!make || !model || !year) {
@@ -223,11 +223,11 @@ app.get('/api/debug/cache', (req, res) => {
 });
 
 app.get("/payment-success", (req, res) => {
-  res.send("<h2>✅ Payment Successful! Thank you for your booking.</h2>");
+  res.send("<h2> Payment Successful! Thank you for your booking.</h2>");
 });
 
 app.post("/api/payment-callback", express.urlencoded({ extended: false }), (req, res) => {
-  console.log("📩 ToyyibPay Callback Received:", req.body);
+  console.log(" ToyyibPay Callback Received:", req.body);
   res.status(200).send("Callback received");
 });
 

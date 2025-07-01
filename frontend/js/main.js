@@ -1,5 +1,7 @@
 const carList = document.getElementById('carList');
 const filterBtn = document.getElementById('applyFilter');
+const loadingOverlay = document.getElementById('loadingOverlay');
+loadingOverlay.style.display = "flex";
 let allCars = [];
 let filteredCars = [];
 const carsPerPage = 10;
@@ -102,7 +104,7 @@ function renderCars(page) {
     const card = document.createElement('div');
     card.className = 'car-card';
     card.innerHTML = `
-      <img id="${imageId}" src="${image}" alt="${make} ${model}" onerror="this.src='/images/placeholder.jpg'">
+      <img id="${imageId}" src="${image}" alt="${make} ${model}" onerror="src='/upload/placeholder.jpg'">
       <div class="card-content">
         <h3>${make} ${model}</h3>
         <span class="year-badge">${year}</span>
@@ -180,7 +182,6 @@ fetch('http://localhost:5000/api/cars')
 
     while (enriched.length < maxCars && index < baseCars.length) {
       const car = baseCars[index];
-      // const randomLocation = locationList[Math.floor(Math.random() * locationList.length)];
       index++;
 
       try {
@@ -224,6 +225,7 @@ fetch('http://localhost:5000/api/cars')
     filteredCars = allCars;
     renderCars(currentPage);
     renderPagination();
+    loadingOverlay.style.display = "none"; 
   })
   .catch(err => {
     console.error('Error fetching cars:', err);
